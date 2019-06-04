@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+  </head>
+  <body>
+    <h1>支持正则的，string对象的方法</h1>
+    <h3>
+      search ---> str.search(reg or toreg) ===> -1 index
+    </h3>
+    <ol>
+      <li>类似indexOf,没匹配到时返回-1,匹配到时返回第一个匹配时的index</li>
+      <li>不同于类似indexOf,不能用于数组</li>
+    </ol>
+    <h3>
+      match ---> str.search(reg or toreg) ===> null [描述] []
+    </h3>
+    <ol>
+      <li>没匹配到时返回null</li>
+      <li>
+        没g标识时，返回一个数组['匹配中1','匹配中2'...index:'第一个匹配中时的index',input:'原始字符串',groups:...]
+      </li>
+      <li>有g标识时，返回一个数组['匹配中1','匹配中2']</li>
+    </ol>
+    <h3>
+      replace ---> str.replace(str or reg, str or func) ===> str
+    </h3>
+    <ol>
+      <li>
+        第一个参数为str时，作为检索直接量文本，不会转为正则
+      </li>
+      <li>
+        第二个参数为str时，可以使用一些特殊变量，代替匹配中的字符串
+        <table border="1">
+          <tr>
+            <th>变量名</th>
+            <th>代表值</th>
+          </tr>
+          <tr>
+            <td>$$</td>
+            <td>$</td>
+          </tr>
+          <tr>
+            <td>$&</td>
+            <td>匹配中的字符</td>
+          </tr>
+          <tr>
+            <td>$`</td>
+            <td>匹配中左边</td>
+          </tr>
+          <tr>
+            <td>$'</td>
+            <td>匹配中右边</td>
+          </tr>
+          <tr>
+            <td>$n</td>
+            <td>第n个括号匹配中</td>
+          </tr>
+        </table>
+      </li>
+      <li>
+        第二个参数为func时，可以return回想要格式的文本，函数参数(match,p1,p2,p3,offest,string)如下
+        <table border="1">
+          <tr>
+            <th>参数名</th>
+            <th>代表值</th>
+          </tr>
+          <tr>
+            <td>match</td>
+            <td>匹配中的字符,对应$&</td>
+          </tr>
+          <tr>
+            <td>p1,p2,...pn</td>
+            <td>第n个括号匹配中,对应$1,$2...</td>
+          </tr>
+          <tr>
+            <td>offest</td>
+            <td>匹配中相对原字符串的偏移量</td>
+          </tr>
+          <tr>
+            <td>string</td>
+            <td>原str</td>
+          </tr>
+        </table>
+      </li>
+    </ol>
+
+    <h1>正则对象的方法</h1>
+    <h3>test ---> reg.test(str)</h3>
+    <ol>
+      <li>没匹配中的时候返回false</li>
+      <li>匹配中的时候返回true</li>
+    </ol>
+    <h3>exec ---> reg.exec(str) ===> null [描述]</h3>
+    <ol>
+      <li>
+        类似match方法没g标识时，返回['匹配中1','匹配中2'...index:'第一个匹配中时的index',input:'原始字符串',groups:...]
+      </li>
+      <li>
+        有g和没g，返回值没差。但是有g的话，可以实现‘链式’执行。即reg有一个lastIndex属性。
+        有g匹配后，lastIndex设置为匹配中文本最后一个字符的下一个位置。没有匹配中时返回null。可用while循环遍历
+        没g匹配。lastIndex始终为0
+      </li>
+    </ol>
+  </body>
+</html>

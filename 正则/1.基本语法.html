@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <h1>基本元字符</h1>
+    <ol>
+        <li>.--->除换行符之外的所有单个字符</li>
+        <li>\--->转义符</li>
+        <li>|--->逻辑或</li>
+        <li>[]--->字符集合</li>
+        <li>[^]--->字符集合取反</li>
+        <li>- --->区间</li>
+    </ol>
+    <h1>数量元字符</h1>
+    <ol>
+        <li>*--->{0,}</li>
+        <li>?--->{0,1}</li>
+        <li>+--->{1,}</li>
+        <li>{m}</li>
+        <li>{m,n}</li>
+        <li>{m,}</li>
+    </ol>
+    <h1>位置元字符</h1>
+    <ol>
+        <li>^--->开始</li>
+        <li>$--->结束</li>
+        <li>\b--->单词边界(boundary)</li>
+        <li>\B--->非单词边界</li>
+        <li>(?=x)--->x前面位置</li>
+        <li>(?!x)--->非x前面位置</li>
+    </ol>
+    <h1>特殊元字符</h1>
+    <ol>
+        <li>\d--->[0-9]数字</li>
+        <li>\D--->[^0-9]非数字</li>
+        <li>\w--->[a-zA-Z0-9_]单词字符</li>
+        <li>\W--->[^a-zA-Z0-9_]非单词字符</li>
+        <li>\s--->[\r\t\v\n\f ]空白符</li>
+        <li>\S--->[^\r\t\v\n\f ]非空白符</li>
+    </ol>
+    <h1>修饰符</h1>
+    <ol>
+        <li>g--->global全局->没有的话匹配单行单个</li>
+        <li>m--->multiline->多行匹配，只影响^和$</li>
+        <li>i--->ignoreCase->大小写不敏感</li>
+    </ol>
+    <script>
+        // var reg = /元字符/修饰符 -》字面量方式
+        // var reg = new RegExp('元字符',修饰符) -》
+        // -实例创建方式 想要和字面量方式保持统一的话,对于\d \w \n...这些都需要多加一个\,使其\d具有自己的特殊的意义
+        // -有变量传入的时候，只能用实例创建方式
+    </script>
+</body>
+</html>
