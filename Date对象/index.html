@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+    <script src="https://unpkg.com/dayjs"></script>
+  </head>
+  <body>
+    <script>
+      //年月日时分秒星期几
+      // -常用
+      var dt = new Date();
+      var y = dt.getFullYear(),
+        M = dt.getMonth() + 1,
+        d = dt.getDate(),
+        h = dt.getHours(),
+        m = dt.getMinutes(),
+        s = dt.getSeconds(),
+        ms = dt.getMilliseconds(),
+        w = dt.getDay(); // 0->6  星期天->星期六
+      console.log(y, M, d);
+      console.log(h, m, s);
+      console.log(ms);
+      console.log(w);
+      // -获得yyyy-mm-dd格式
+      console.log(new Date('2019-05-20').toJSON()); // 如2019-05-20T00:00:00.000Z
+      console.log(new Date('2019-05-20').toLocaleDateString()); //2019/5/20 IE9->2019‎年‎5‎月‎20‎日
+      console.log(new Date().toJSON().split('T')[0]); //推荐 等于new Date().toISOString().split('T')[0]
+
+      console.log('================================================');
+      // 本地时间和UTC, GMT时间差
+      // -北京时间在东八区 如北京时间早上8点 国际通用时间就是0点
+      // -和/.有差 所以下面的函数只适用-作为分割符时
+      console.log(new Date('2019-06-04')); // Tue Jun 04 2019 08:00:00 GMT+0800 (中国标准时间)
+      console.log(new Date('2019/06/04')); // Tue Jun 04 2019 00:00:00 GMT+0800 (中国标准时间)
+      console.log(new Date('2019.06.04')); // Tue Jun 04 2019 00:00:00 GMT+0800 (中国标准时间) //firefox IE9->Invalid Date
+      console.log(new Date(2019, 05, 04)); // Tue Jun 04 2019 00:00:00 GMT+0800 (中国标准时间)
+      console.log('----');
+      function getUtcDate(date) {
+        if (/^\d{4}(-\d{2}){2}$/.test(date)) {
+          var localDate = new Date(date);
+          var timezoneOffest = localDate.getTimezoneOffset(); // 时区差 分钟
+          var utcTimeStamp = localDate.getTime() + timezoneOffest * 60 * 1000;
+          return new Date(utcTimeStamp);
+        }
+      }
+      console.log(getUtcDate('2019-06-04')); // Tue Jun 04 2019 00:00:00 GMT+0800 (中国标准时间)
+      console.log(getUtcDate('2019-06-04').getTime()); // Tue Jun 04 2019 00:00:00 GMT+0800 (中国标准时间)
+      console.log('-------------------');
+      // -带时分或者时分秒时,都一样
+      console.log(new Date('2019-06-05 09:10:03')); // Wed Jun 05 2019 09:10:03 GMT+0800 (中国标准时间) //IE9->Invalid Date
+      console.log(new Date('2019/06/05 09:10:03')); // Wed Jun 05 2019 09:10:03 GMT+0800 (中国标准时间)
+      console.log(new Date('2019.06.05 09:10:03')); // Wed Jun 05 2019 09:10:03 GMT+0800 (中国标准时间) //firefox IE9->Invalid Date
+
+      console.log('================================================');
+      // getTime() valueOf() Date.now()和Date.parse() Date.UTC()
+      console.log(new Date().getTime());
+      console.log(new Date().valueOf());
+      console.log(Date.now());
+      console.log(new Date().getTime() === new Date().valueOf());
+      console.log(new Date().getTime() === Date.now());
+      console.log(new Date().valueOf() === Date.now());
+      console.log('----');
+      console.log(new Date('2019-06-04').getTime()); //1559606400000
+      console.log(new Date('2019-06-04').valueOf());
+      console.log(Date.parse('2019-06-04'));
+      console.log(Date.UTC(2019, 5, 4)); // 月份从0开始
+      console.log('----');
+      console.log(new Date('2019/06/04').getTime()); //1559577600000
+      console.log(new Date(2019, 5, 4).getTime()); // 月份从0开始
+      console.log(new Date('2019/06/04').valueOf());
+      console.log(Date.parse('2019/06/04'));
+    </script>
+    <script src="time.js"></script>
+  </body>
+</html>
