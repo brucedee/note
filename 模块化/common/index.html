@@ -9,9 +9,11 @@
   <body>
     <div id="demo"></div>
     <script>
-      // commonjs
-      // -nodejs模块化规范
-      // -不会异步加载 同步一次性加载
+      // CMD ->seajs ->> var moduleX = require('moduleX')
+      // -nodejs模块系统 参照CommonJS规范实现
+      // -同步 -》对于服务器，模块都放在本地硬盘，可以同步加载完成，等待时间就是硬盘读取时间
+      // -不会污染了全局变量
+      // -依赖关系自动引用
     </script>
     <script src="./dist/bundle.js"></script>
   </body>

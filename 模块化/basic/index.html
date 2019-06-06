@@ -5,11 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>Document</title>
-    <script src="jq.js"></script>
     <script src="util.js"></script>
+    <script src="jq.js"></script>
     <script src="a.js"></script>
     <script src="index.js"></script>
     <script>
+      getAge();
+      console.log(NUM);
+      moduleA.aGetDemo();
+      console.log('------');
       let dt = new Date();
       console.log(theDate(dt));
 
@@ -20,6 +24,9 @@
       // -污染了全局变量
       // -得保证引入顺序
       // -依赖关系不好确定
+
+      // 参考
+      // -Javascript模块化编程 阮一峰 http://www.ruanyifeng.com/blog/2012/10/javascript_module.html
     </script>
   </head>
   <body></body>

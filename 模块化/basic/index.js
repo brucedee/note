@@ -1,3 +1,3 @@
 function theDate(date) {
-  return modeA.aGetFormatDate(date);
+  return moduleA.aGetFormatDate(date);
 }
