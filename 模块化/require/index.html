@@ -12,19 +12,18 @@
     <script src="b.js"></script>
     <!-- <script src="b.js" defer></script>
     <script src="b.js" async></script> -->
-    <script>
-      console.dir(window);
-
-      // AMD ->requirejs ->> require([module],callback(moduleX))
-      // -异步 =》 对于浏览器，模块都放在服务器端，等待时间取决于网速，浏览器可能'假死'
-      // -不会污染了全局变量
-      // -依赖关系自动引用
-    </script>
   </head>
   <body>
     <div class="demo">
       hello star
     </div>
     <p>ppp</p>
+    <script>
+      console.dir(window);
+      // AMD ->requirejs ->>define(func) define([...],func) ->> require([module],callback(moduleX))
+      // -异步 =》 对于浏览器，模块都放在服务器端，等待时间取决于网速，浏览器可能'假死'
+      // -不会污染了全局变量
+      // -依赖关系自动引用
+    </script>
   </body>
 </html>
