@@ -5,27 +5,34 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>Document</title>
-    <script src="util.js"></script>
-    <script src="jq.js"></script>
-    <script src="a.js"></script>
+    <script src="funcs.js"></script>
+    <script src="objs.js"></script>
+    <script src="iife.js"></script>
     <script src="index.js"></script>
     <script>
+      console.log('---------funcs---------');
+      console.log('NUM:' + NUM);
       getAge();
-      console.log(NUM);
-      moduleA.aGetDemo();
-      console.log('------');
-      let dt = new Date();
-      console.log(theDate(dt));
 
-      setTimeout(() => {
-        console.dir(window);
-      }, 1000);
-      //弊端
+      console.log('---------objs---------');
+      console.log('_count:' + objs._count);
+
+      console.log('---------iife---------');
+      console.log(moduleB.bGetCount());
+
+      let dt = new Date();
+      console.log(theDateA(dt));
+      console.log(theDateB(dt));
+
+      console.log('---------window---------');
+      console.dir(window);
+
+      //弊端总结
       // -污染了全局变量
       // -得保证引入顺序
-      // -依赖关系不好确定
+      // -依赖关系不明了
 
-      // 参考
+      //参考
       // -Javascript模块化编程 阮一峰 http://www.ruanyifeng.com/blog/2012/10/javascript_module.html
     </script>
   </head>
