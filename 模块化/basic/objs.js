@@ -1,10 +1,10 @@
 //对象写法
-// -暴露了模块私有成员 如$._count = 456
+// -暴露了模块私有成员 如objs._count = 456
 
 var objs = {
-  _count: NUM, //funcs.js需要先引入
+  _count: NUM * 2, //funcs.js需要先引入
   getCount: function() {
-    return this._count * 10;
+    return this._count;
   },
   theType: {
     t1: 1,

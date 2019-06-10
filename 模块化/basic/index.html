@@ -10,23 +10,6 @@
     <script src="iife.js"></script>
     <script src="index.js"></script>
     <script>
-      console.log('---------funcs---------');
-      console.log('NUM:' + NUM);
-      getAge();
-
-      console.log('---------objs---------');
-      console.log('_count:' + objs._count);
-
-      console.log('---------iife---------');
-      console.log(moduleB.bGetCount());
-
-      let dt = new Date();
-      console.log(theDateA(dt));
-      console.log(theDateB(dt));
-
-      console.log('---------window---------');
-      console.dir(window);
-
       //弊端总结
       // -污染了全局变量
       // -得保证引入顺序
@@ -34,6 +17,23 @@
 
       //参考
       // -Javascript模块化编程 阮一峰 http://www.ruanyifeng.com/blog/2012/10/javascript_module.html
+
+      console.log('---------funcs---------');
+      console.log('NUM:' + NUM); //NUM:10
+      getAge(); //age 18
+
+      console.log('---------objs---------');
+      console.log('_count:' + objs._count); //_count:20
+
+      console.log('---------iife---------');
+      console.log(moduleB.bGetCount()); //200
+
+      let dt = new Date();
+      console.log(theDateA(dt)); //x年x月x日
+      console.log(theDateB(dt)); //x-x-x
+
+      console.log('---------window---------');
+      console.dir(window);
     </script>
   </head>
   <body></body>
