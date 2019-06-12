@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>同步异步单线程</title>
+    <script src="https://cdn.bootcss.com/jquery/3.0.0/jquery.min.js"></script>
+  </head>
+  <body>
+    <h1>同步</h1>
+    <ul>
+      <li>同步会阻塞代码执行，按顺序</li>
+    </ul>
+    <h1>异步</h1>
+    <ul>
+      <li>异步不会阻塞代码执行，不确定哪个先执行完</li>
+      <li>
+        何时需要：可能发生等待的时候，等待的过程中不能像alert一样阻塞程序的运行
+      </li>
+      <li>
+        前端使用异步的场景： <br />
+        定时任务： setTimeout setInterval <br />
+        网络请求： ajax请求 动态img的加载 <br />
+        事件绑定
+      </li>
+      <li>
+        异步也有问题：<br />
+        没按书写方式执行，可读性差<br />
+        callback中不容易模块化
+      </li>
+    </ul>
+    <button>点我</button>
+    <hr />
+    <h1>单线程</h1>
+    <ul>
+      <li>
+        简述----只有一个线程，同一时间只能做一件事。运行环境有且只有一个调用栈(记录当前程序所在位置的数据结构)
+      </li>
+      <li>
+        原因----避免DOM解析渲染冲突(浏览器可以修改，js也可以修改DOM。js执行的时候，浏览器暂停。另外两句js也不能同时执行，都修改就冲突了)
+        注：h5 webworker(运行在后台的js)支持多线程，但不能访问DOM
+      </li>
+      <li>解决方案----异步</li>
+      <li>实现方式----event-loop</li>
+    </ul>
+    <script>
+      // 执行的阻塞问题->https://www.jianshu.com/p/a3abaf4bbddd
+      // js加载会阻塞DOM树的解析渲染，但是js在DOM的后面的话，此时DOM数已解析，等待同步js执行完之后再渲染
+      // css加载只会阻塞DOM树的渲染
+      setTimeout(() => {
+        console.log(112233);
+      });
+      console.log(!!document.querySelectorAll('h1'));
+      window.addEventListener('load', function() {
+        console.log('window onload');
+      });
+      document.addEventListener('DOMContentLoaded', function() {
+        console.log('DOMContentLoaded');
+      });
+      //同步
+      console.log('a');
+      console.time('fb1');
+      console.log(fb1(45)); //会'转圈'
+      console.timeEnd('fb1');
+      // alert('b');
+      console.log('c');
+      console.log('-----------------------------------------');
+      //异步
+      // -定时任务
+      console.log(1);
+      setTimeout(() => {
+        //此函数暂存起来，待所有程序（同步）执行完！
+        //处于空闲状态时立马看有没有暂存起来的要执行。这里发现了，然后等6s！执行
+        console.log(666);
+      }, 6000);
+      setTimeout(() => {
+        console.log(555);
+      }, 5000);
+      console.log(3);
+
+      function fb1(n) {
+        if (n <= 3) {
+          return n;
+        }
+        return fb1(n - 1) + fb1(n - 2);
+      }
+      /* var arr = [0, 1, 2, 3];
+      function fb(n) {
+        if (n <= 3) {
+          return arr[n];
+        }
+        return arr[n] || (arr[n] = fb(n - 1) + fb(n - 2));
+      }
+      console.log(fb(45)); */
+
+      // -网络请求
+      //  --ajax请求
+      console.log('get start');
+      $.get('./demo.txt', function(data) {
+        console.log(data);
+      });
+      console.log('get end');
+
+      //  --动态img加载
+      console.log('load start');
+      let img = document.createElement('img');
+      img.onload = function(url) {
+        console.log('img loaded');
+        // alert();
+        document.body.appendChild(img);
+      };
+      img.src =
+        'https://p0.ifengimg.com/2019_24/2d53f959-6b62-4ad1-b921-c6ae59a8c302_80EF2AD8ED216714D17BFAE37282A532F2C6F071_w800_h450.jpg';
+      console.log('load end');
+
+      // -事件绑定
+      console.log('click before');
+      document
+        .getElementsByTagName('button')[0]
+        .addEventListener('click', function() {
+          console.log('clicked before');
+          alert('clicked');
+          console.log('clicked after');
+        });
+      console.log('click after');
+    </script>
+  </body>
+</html>

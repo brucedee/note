@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>事件轮询</title>
+  </head>
+  <body>
+    <h1>event-loop</h1>
+    <ul>
+      <li>js实现异步的具体解决方案</li>
+
+      <li>同步代码，按顺序直接执行</li>
+      <li>异步代码，先放到一边</li>
+      <li>待同步代码执行完毕</li>
+      <li>
+        异步代码，根据状态（如定时器那就指相应时间，ajax请求就是指请求成功时），添加到异步队列
+      </li>
+      <li>最后轮询执行 异步队列 中的代码</li>
+    </ul>
+  </body>
+</html>
