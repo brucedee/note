@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <title>Document</title>
+    <title>CMD</title>
     <script src="https://cdn.bootcss.com/seajs/3.0.0/sea.js"></script>
   </head>
   <body>
@@ -18,7 +18,9 @@
 
       seajs.use('./hello', function(hello) {
         $('#hello').click(hello.sayHello);
+        console.log('后');
       });
+      console.log('先');
     </script>
   </body>
 </html>

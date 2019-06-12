@@ -9,3 +9,4 @@ require(['./a'], function(a) {
   var dt = new Date();
   a.printDate(dt);
 });
+console.log('noneed wait loading moduleA');

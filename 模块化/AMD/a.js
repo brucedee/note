@@ -5,3 +5,8 @@ define(['./a-util'], function(aUtil) {
     }
   };
 });
+let sum = 0;
+for (let i = 0; i < 1000000000; i += 1) {
+  sum++;
+}
+console.log(sum);

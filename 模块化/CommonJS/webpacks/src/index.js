@@ -13,10 +13,12 @@ a.increment();
 console.log(a.counter);
 a.increment();
 console.log(a.counter);
+console.log('need wait loading moduleA');
 console.log('--------------------------------------');
 
 const $ = require('jquery');
-$('p').css('color', 'red');
+//import $ from 'jquery'; //也可以
+$('p').css('color', 'green');
 console.dir($);
 console.log('--------------------------------------');
 

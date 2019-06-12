@@ -18,6 +18,12 @@ function increment() {
   counter++;
 }
 
+let sum = 0;
+for (let i = 0; i < 5000000; i += 1) {
+  sum++;
+}
+console.log(sum);
+
 module.exports = {
   a2,
   afunc2,
