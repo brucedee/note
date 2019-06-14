@@ -40,10 +40,10 @@ console.log(c1);
 
 //import()
 // -按需加载
-var btn = document.getElementById('btn');
+/* var btn = document.getElementById('btn');
 btn.addEventListener('click', function() {
   import('./d0');
-});
+}); */
 // -条件加载-》如果直接写true或者false，则会'静态分析' 不会打包false的那个模块
 if (Math.random() > 0.5) {
   import('./d1');
@@ -71,7 +71,14 @@ import(`${getPath()}`).then(obj => {
 const goe = require('./e');
 console.log('eif:' + goe.eif);
 console.log('----');
-const gof = require('./f'); // --gof并没有再执行,输出的是f.js的缓存执行结果
+const gof = require('./f'); // --gof并没有再执行,得到f.js的缓存执行结果
 console.log('fif:' + gof.fif);
+
+// -es6
+// -动态引用,需要开发者自己保证取到值
+import { g1 } from './g';
+console.log(g1);
+import * as h from './h'; // --也不会再执行
+console.log(h);
 
 console.log('------------------index-------------------');
