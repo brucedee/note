@@ -13,7 +13,8 @@ module.exports = {
         exclude: /node_modules/, //不排除的话，引入的模块也会经过babel转化，但其实不需要，让引入的模块保留它自身就好
         loader: 'babel-loader',
         options: {
-          presets: ['@babel/preset-env']
+          presets: ['@babel/preset-env'],
+          plugins: ['@babel/plugin-syntax-dynamic-import']
         }
       }
     ]

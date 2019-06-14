@@ -28,6 +28,9 @@ module.exports = {
   a2,
   afunc2,
   counter,
+  /* get counter() {
+    return counter;
+  }, */
   increment
 };
 
