@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      function loadImg(s) {
+        const p = new Promise((reso, rej) => {
+          let img = document.createElement('img');
+          img.onload = function() {
+            reso(img);
+          };
+          img.onerror = function(e) {
+            rej(e);
+          };
+          img.src = s;
+        });
+        return p;
+      }
+
+      let src = 'https://www.baidu.com/img/baidu_resultlogo@2.png';
+      loadImg(src)
+        .then(function(i) {
+          document.body.appendChild(i);
+          console.log(i.width);
+        })
+        .then(function(i) {
+          console.log('ok0');
+          // console.log(i.height);
+          try {
+            const a = 90;
+            a = 87;
+          } catch (error) {
+            console.log(error);
+          }
+        })
+        .then(function() {
+          console.log('ok1');
+        })
+        .then(function() {
+          console.log('ok2');
+        })
+        .then(function() {
+          console.log('ok3');
+        })
+        .catch(function(e) {
+          console.log('catch');
+          console.log(e);
+        });
+    </script>
+  </body>
+</html>

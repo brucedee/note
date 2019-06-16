@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      var xhr = new XMLHttpRequest();
+
+      xhr.open('GET', 'demo.txt'); // 如果第三个参数设置为false 表示同步
+      xhr.onreadystatechange = function() {
+        if (xhr.readyState == 4) {
+          if (xhr.status == 200) {
+            //304 缓存
+            console.log(xhr);
+            console.log(xhr.response);
+          }
+        }
+      };
+      xhr.send();
+      console.log('---ajax---');
+    </script>
+  </body>
+</html>

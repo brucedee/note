@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+    <script src="https://cdn.bootcss.com/jquery/3.0.0/jquery.min.js"></script>
+  </head>
+  <body>
+    <script>
+      // 问题
+      // -jquery1.5对ajax都改变 callback-》链式写法 done fail then
+      // -简单封装使用Defered
+      // -promise和Deferred的区别 -》
+      // --Deferred有resolve，reject这样主动触发的函数，也有done fail then这样被动监听的函数，混在一块容易被外面篡改
+      // --通过生成一个promise对象进行隔离，promise对象只能被动监听，没有主动触发的权利
+
+      // 1.5以前
+      var ajax1 = $.ajax({
+        url: 'demo1.txt',
+        success: function(data) {
+          console.log('ajax1 success:' + data);
+        },
+        error: function(error) {
+          console.log('ajax1 error:' + error.statusText);
+        }
+      });
+      console.log(ajax1);
+      console.log(123);
+
+      // 1.5以后
+      // -从写法上杜绝callback形式
+      // -语法糖，解耦了代码
+      // -体现了开放封闭原则-》对扩展开放 对修改封闭
+
+      //ajax2
+      var ajax2 = $.ajax('demo.txt'); //这里有错，fail1和fail2都会捕获,done都不执行
+      console.log(ajax2);
+      ajax2
+        .done(function(d) {
+          console.log('ajax2 done1:' + d);
+          // 下面的fail无法捕获这里的错，除非try catch，才会接下去执行
+          //throw new Error('bbb');
+          try {
+            const bbb = 10;
+            bbb = 90;
+          } catch (error) {
+            console.log('trycatch:' + error);
+          }
+        })
+        .fail(function(f) {
+          console.log('ajax2 fail1:' + f.statusText);
+        })
+        .done(() => console.log('ajax2 done2'))
+        .fail(function(f) {
+          console.log('ajax2 fail2:' + f.statusText);
+        });
+
+      //ajax3
+      var ajax3 = $.ajax('demo3.txt');
+      ajax3
+        .then(
+          function(res) {
+            console.log('ajax3 then1:' + res);
+            //throw new Error('ccc');
+            const ccc = 10;
+            ccc = 90;
+          },
+          function(error) {
+            console.log('ajax3 err:' + error.statusText);
+            throw new Error('wrongs');
+            const a = 1;
+            a = 2;
+          }
+        )
+        .catch(err => {
+          // 有捕获错误会执行下面的then，否则不执行下面的then，直接到下面的catch
+          console.log('ajax3 catch1 err:' + err);
+        })
+        .then(function() {
+          //前面有捕获错误才会执行
+          console.log('ajax3 then2');
+        })
+        .catch(function(err) {
+          console.log('ajax3 catch2 err:' + err);
+        });
+
+      // var wait = function() {
+      //   var task = function() {
+      //     console.log('go');
+      //   };
+      //   setTimeout(task, 2000);
+      // };
+      // wait();
+
+      //deferred 封装示例
+      function handleWait() {
+        var def = $.Deferred();
+
+        var wait = function() {
+          var task = function() {
+            console.log('gogo');
+            //def.reject('rej1');
+            def.resolve('reso1');
+          };
+
+          setTimeout(task, 2000);
+
+          //return def; // 返回deferred对象
+          return def.promise(); //返回promise对象，防止不老实写法，会报错
+        };
+
+        return wait();
+      }
+
+      var h = handleWait();
+      //h.reject(); // 不老实写法
+      //h.resolve(); // 不老实写法
+      console.log(987);
+      console.log(h);
+
+      // h.then(
+      //   function(succ) {
+      //     //console.log(succ);
+      //     console.log('ok1');
+      //     //throw new Error('xx');
+      //   },
+      //   function(fail) {
+      //     //console.log(fail);
+      //     console.log('err1');
+      //   }
+      // )
+      //   .then(
+      //     function() {
+      //       console.log('ok2');
+      //       throw new Error('xx');
+      //     },
+      //     function() {
+      //       console.log('err2');
+      //     }
+      //   )
+      //   .then(
+      //     function() {
+      //       console.log('ok3');
+      //     },
+      //     function() {
+      //       console.log('err3');
+      //     }
+      //   );
+
+      //h.done(d => console.log(d)).fail(f => console.log(f));
+
+      // 对应开放封闭，一个回调里些所有，分成3个，n个里面写
+      h.then(
+        function() {
+          console.log('s1');
+        },
+        function() {
+          console.log('e1');
+          throw new Error('cc');
+        }
+      ).catch(e => {
+        console.log(e);
+      });
+      h.then(
+        function() {
+          console.log('s2');
+        },
+        function() {
+          console.log('e2');
+        }
+      );
+      h.then(
+        function() {
+          console.log('s3');
+        },
+        function() {
+          console.log('e3');
+        }
+      );
+    </script>
+  </body>
+</html>
