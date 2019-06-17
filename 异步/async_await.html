@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      const AUTHORIZE = false;
+      const REQUESTOk = false;
+      const p1 = new Promise((reso, rej) => {
+        if (AUTHORIZE) {
+          if (REQUESTOk) {
+            reso({
+              code: 'CORRECT',
+              data: {
+                name: 'lucky',
+                age: 10
+              },
+              message: '请求成功'
+            });
+          } else {
+            reso({
+              code: 'ERROR',
+              data: null,
+              message: '请求失败'
+            });
+          }
+        } else {
+          rej('未授权');
+        }
+      }).catch(err => {
+        console.log(err);
+      });
+
+      const p2 = new Promise((reso, rej) => {
+        reso('promise 2');
+      });
+
+      /* p1.then(
+        function(s) {
+          console.log(s);
+        },
+        function() {}
+      ); */
+      /* p1.then(function(s) {
+        console.log(s);
+      }).catch(() => {}); */
+
+      async function test() {
+        console.log('start');
+        const res = await p1;
+        console.log(res);
+      }
+      test();
+
+      console.log('---------------------------end---------------------------');
+      setTimeout(() => {
+        console.log(789);
+      }, 2000);
+    </script>
+  </body>
+</html>

@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>函数柯里化</title>
+  </head>
+  <body>
+    <button id="btn">点击</button>
+    <script>
+      //柯里化-》 部分求值，接受多个参数的函数变换成接受单一参数（最初函数的第一个参数）的函数 ，并且返回 接受余下参数返回结果 的新函数
+      function add(a, b) {
+        console.log('a:' + a);
+        console.log('b:' + b);
+        return a + b;
+      }
+      console.log(add(1, 2));
+
+      function adds(x) {
+        return function(y) {
+          return x + y;
+        };
+      }
+      console.log(adds(3)(4));
+
+      console.log('------------参数重用--------------');
+      //-用处
+      // --参数重用
+      function regTest(reg, str) {
+        return reg.test(str);
+      }
+      function regTests(reg) {
+        return function(str) {
+          return reg.test(str);
+        };
+      }
+      is2Decimal = regTests(/^([1-9]\d*|0)(\.\d{1,2})?$/);
+      console.log(is2Decimal('2.233'));
+
+      console.log('-------------提前返回--------------');
+      // --提前返回
+      function getNum() {
+        var num = 0;
+        for (let i = 0; i < 2000000000; i += 1) {
+          num++;
+        }
+        return num;
+      }
+
+      /* var showMsg = function() {
+        if (getNum() > 10) {
+          console.log('大于');
+        } else {
+          console.log('小于');
+        }
+      };
+      btn.addEventListener('click', function() {
+        showMsg();
+      }); */
+
+      var showMsgs = (function() {
+        if (getNum() > 10) {
+          return function() {
+            console.log('大于');
+          };
+        } else {
+          return function() {
+            console.log('小于');
+          };
+        }
+      })();
+
+      btn.addEventListener('click', function() {
+        showMsgs();
+      });
+
+      console.log('-------------延迟计算/执行--------------');
+      // --延迟计算/执行
+      var obj = {
+        age: 10,
+        getAge(p) {
+          console.log(this.age + p);
+        }
+      };
+      obj1 = {
+        age: 20
+      };
+      obj.getAge(5);
+      obj.getAge.bind(obj1)(5);
+
+      Function.prototype.binds = function(context) {
+        var self = this;
+        var argOther = Array.from(arguments).slice(1);
+        return function() {
+          var agrs = argOther.push(...arguments);
+          self.apply(context, argOther);
+        };
+      };
+      obj.getAge.binds(obj1, 8)();
+
+      console.log('-------------封装--------------');
+
+      // -初步封装
+      function currying(fn) {
+        var argOther = [].slice.call(arguments, 1);
+        return function() {
+          var args = [...argOther, ...arguments];
+          return fn.apply(this, args); //this window
+        };
+      }
+
+      var currying1 = currying(add, 2);
+      console.log(currying1);
+      console.log(currying1(4));
+      console.log('-------------初步--------------');
+
+      //   function aa(p) {
+      //     console.log(p);
+      //   }
+      //   var currying2 = currying(aa, 4)();
+      //   console.log(currying2);
+
+      // -多参数传递
+      function curryings(fn, arg) {
+        var _this = this;
+        var len = fn.length;
+
+        var args = [];
+        if (arg) {
+          if (arg instanceof Array) {
+            args = arg;
+          } else {
+            args = [arg];
+          }
+        }
+        console.log(args);
+        return function() {
+          //   var _args = Array.prototype.slice.call(arguments);
+          //   Array.prototype.push.apply(args, _args);
+          args = [...args, ...arguments];
+
+          // 如果参数个数小于最初的fn.length，则递归调用，继续收集参数
+          if (args.length < len) {
+            return curryings.call(_this, fn, args);
+          }
+
+          // 参数收集完毕，则执行fn
+          return fn.apply(this, args);
+        };
+      }
+      function addss(a, b, c, d) {
+        console.log('a:' + a);
+        console.log('b:' + b);
+        console.log('c:' + c);
+        console.log('d:' + d);
+        return a + b + c + d;
+      }
+      var currying3 = curryings(addss, 7)(8)(9, 1);
+      console.log(currying3);
+
+      // -题目
+      // ad(1)(2)(3) = 6;
+      // ad(1, 2, 3)(4) = 10;
+      // ad(1)(2)(3)(4)(5) = 15;
+      function ad() {
+        const args = Array.from(arguments);
+        const ader = function() {
+          args.push(...arguments);
+          return ader;
+        };
+        ader.toString = function() {
+          return args.reduce((a, b) => a + b);
+        };
+        return ader;
+      }
+      var ad1 = ad(3)(2, 4)(76);
+      console.log(ad1);
+
+      //   function ff() {
+      //     return 78;
+      //   }
+      //   ff.toString = function() {
+      //     return 100;
+      //   };
+    </script>
+  </body>
+</html>
