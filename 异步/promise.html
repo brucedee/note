@@ -51,6 +51,99 @@
           console.log('catch');
           console.log(e);
         });
+
+      // 有错误没处理，内部就不会接下去执行。但不会影响外部代码运行
+      // 哪一步拦截错误了(在then的fail函数或者catch)，哪一步就开始接下去执行。拦截错误遵照就近原则
+      // 多个promise在同作用域执行，then()和catch()为同级别节点。p1.a.b.c p2.a.b.c p3.a.b.c形成一条交叉却按顺序的执行链(p1.a p2.a p3.a p1.b p2.b p3.b p1.c p2.c p3.c)
+      const p1 = new Promise((reso, rej) => {
+        if (10 < 5) {
+          reso('p1成功');
+        } else {
+          rej('p1失败');
+        }
+        console.log('--p1--');
+      });
+
+      p1.catch(err => {
+        console.log(err);
+      })
+        .then(
+          function() {
+            console.log('p1成功1');
+          },
+          function() {
+            console.log('p1失败1');
+          }
+        )
+        .then(function() {
+          console.log('p1成功2');
+        })
+
+        .then(function() {
+          console.log('p1成功3');
+        });
+
+      const p2 = new Promise((reso, rej) => {
+        if (10 > 5) {
+          reso('p2成功');
+        } else {
+          rej('p2失败');
+        }
+        console.log('--p2--');
+      });
+
+      p2.then(function(s) {
+        console.log(s);
+      })
+        .catch(err => {
+          console.log(err);
+        })
+        .then(function() {
+          console.log('p2成功1');
+        })
+        .then(function() {
+          console.log('p2成功2');
+        })
+        .then(function() {
+          console.log('p2成功3');
+        });
+
+      const p3 = new Promise((reso, rej) => {
+        if (10 < 5) {
+          reso('p3成功');
+        } else {
+          rej('p3失败');
+        }
+        console.log('--p3--');
+      });
+
+      p3.then(
+        function(s) {
+          console.log(s);
+        },
+        function(err) {
+          console.log(err);
+          return Promise.reject('p3手动失败');
+          //throw new Error('p3手动失败ss');
+        }
+      )
+        .then(function() {
+          console.log('p3成功1');
+        })
+
+        .then(
+          function() {
+            console.log('p3成功2');
+          },
+          function(e) {
+            console.log(e);
+          }
+        )
+        .then(function() {
+          console.log('p3成功3');
+        });
+
+      console.log('-----promise------');
     </script>
   </body>
 </html>

@@ -8,6 +8,7 @@
   </head>
   <body>
     <script>
+      // 登录小demo
       const AUTHORIZE = false;
       const REQUESTOk = false;
       const p1 = new Promise((reso, rej) => {
@@ -19,47 +20,92 @@
                 name: 'lucky',
                 age: 10
               },
-              message: '请求成功'
+              message: '登录成功'
             });
           } else {
             reso({
               code: 'ERROR',
               data: null,
-              message: '请求失败'
+              message: '登录失败'
             });
           }
         } else {
-          rej('未授权');
+          rej({
+            code: 'NOAUTHORIZE',
+            data: null,
+            message: '无权限'
+          });
+          //const a = 9;
+          //a = 87;
         }
+        console.log('--p1--');
       }).catch(err => {
-        console.log(err);
-      });
-
-      const p2 = new Promise((reso, rej) => {
-        reso('promise 2');
+        return err;
+        // return Promise.reject(err); //相当于new Promise... 下面执行的p1不再指'promise p1'
       });
 
       /* p1.then(
-        function(s) {
-          console.log(s);
+        function() {
+          console.log('ok');
         },
-        function() {}
-      ); */
-      /* p1.then(function(s) {
-        console.log(s);
-      }).catch(() => {}); */
+        function(e) {
+          console.log(e);
+        }
+      )
+        .then(
+          () => {
+            console.log('ok1');
+          },
+          e => {
+            console.log('err1:');
+            console.log(e);
+          }
+        )
+        .then(() => {
+          console.log('ok2');
+        }); */
 
+      function getp2(p1res) {
+        return new Promise((reso, rej) => {
+          reso(p1res.message);
+        });
+      }
+
+      // async函数返回一个promise对象
+      // 有错误没处理，内部就不会接下去执行，await同级后面的代码也不会接下去执行
+      // await 相当于已经执行了一个then函数 而且返回的是then succ的res
       async function test() {
         console.log('start');
-        const res = await p1;
-        console.log(res);
-      }
-      test();
+        /* const res = await p1.then(
+          function(r) {
+            console.log(r);
+          },
+          function() {}
+        ); */
+        // const res = await p1.catch(() => {});
+        const res1 = await p1;
 
-      console.log('---------------------------end---------------------------');
-      setTimeout(() => {
-        console.log(789);
-      }, 2000);
+        console.log('res1:', res1);
+        console.log('end');
+        if (res1.code == 'CORRECT') {
+          console.log('res:', res1);
+        }
+        const res2 = await getp2(res1);
+        console.log('finish');
+        return res2;
+      }
+
+      // console.log(test());
+      test().then(
+        function(r) {
+          console.log('async ok', r);
+        },
+        function(f) {
+          console.log('async fail', f);
+        }
+      );
+
+      console.log('----------------------async_await----------------------');
     </script>
   </body>
 </html>
