@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+  </head>
+  <body>
+    <p>hello</p>
+    <div id="map" style="width: 500px;height:500px"></div>
+    <script>
+      //参考
+      //-http://www.ruanyifeng.com/blog/2016/04/same-origin-policy.html 浏览器同源政策及其规避方法 阮一峰
+      // -https://blog.csdn.net/hansexploration/article/details/80314948 jsonp原理详解——终于搞清楚jsonp是啥了
+      //-https://76wp.cn/archives/1942.html 分享一些免费json接口api
+
+      //同源策略
+      // -含义->三同，协议域名端口都相同，才是同源的 -->端口(http默认80 https默认443 ftp默认21 ssh默认22 MySQL默认3306)
+      // -目的->保证用户信息安全，防止窃取数据
+      // -限制范围->存储(Cookie,LocalStorage,IndexDB)无法读取，DOM无法获得，AJAX请求不能发送
+
+      //AJAX
+      // -AJAX请求只能发给同源网址，否则报错
+      // -解决方式->架设代理服务器(浏览器请求同源同源服务器，在由后者请求外部服务器)  JSONP WebSocket CORS
+
+      //跨域注意事项
+      // -所有的跨域请求，都必须经过信息提供方允许
+      // -如果未经允许即可获取，那是浏览器同源策略出现漏洞了
+
+      //服务器端设置http header
+      // Access-Control-Allow-Origin 访问控制允许涞源
+      // Response.setHeader('Access-Control-Allow-Origin','xx1.com,xx2.com') //*
+
+      //JSONP
+      // -浏览器有同源策略，但是带有src属性的标签不受影响
+      // -生成一个script标签，向服务器发送请求，请求要带有一个callback参数，指定一个回调函数名字。
+      // -服务器收到请求后，动态生成JSON格式的数据，将它放到这个指定回调函数中也就是作为参数(如下面的thecb)传回来
+      // -页面上定义这个函数，就会立即执行，我们就拿到了返回的数据。作为参数的JSON数据，会被是为js对象，不是字符串，所以也不需要JSON.parse
+
+      function thecb(d) {
+        console.log(d);
+      }
+
+      function addScriptTag() {
+        let ele = document.createElement('script');
+        ele.src =
+          'https://suggest.taobao.com/sug?code=utf-8&q=衣服&callback=thecb';
+        document.body.appendChild(ele);
+      }
+
+      addScriptTag();
+    </script>
+    <!-- <script src="https://suggest.taobao.com/sug?code=utf-8&q=衣服&callback=cb"></script> -->
+  </body>
+</html>
