@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      //vdom(virtual dom)是什么?为什么会存在vdom?
+      // -虚拟DOM
+      // -用JS模拟DOM     -》用JS模拟DOM结构
+      // -DOM操作太昂贵了
+      // -用JS替代对比层    -》DOM变化的对比，放在JS层来做 提高重绘性能
+
+      //vdom如何应用 核心api是什么
+      // -借鉴了snabbdom
+      // -h->把一些数据转化成vnode patch->把vnode转化成真实的DOM
+
+      //介绍一下diff算法
+      // -diff是linux和git的基本命令，以前主要是用来对比文本文件的
+      // -在虚拟DOM里面，是用来对比虚拟DOM节点的
+      // -主要有两块，createElement(container,vnode) updateElement(vnode,newvnode)
+    </script>
+  </body>
+</html>
