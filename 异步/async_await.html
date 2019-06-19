@@ -45,25 +45,25 @@
       });
 
       /* p1.then(
-        function() {
-          console.log('ok');
-        },
-        function(e) {
-          console.log(e);
-        }
-      )
-        .then(
-          () => {
-            console.log('ok1');
-          },
-          e => {
-            console.log('err1:');
-            console.log(e);
-          }
-        )
-        .then(() => {
-          console.log('ok2');
-        }); */
+              function() {
+                console.log('ok');
+              },
+              function(e) {
+                console.log(e);
+              }
+            )
+              .then(
+                () => {
+                  console.log('ok1');
+                },
+                e => {
+                  console.log('err1:');
+                  console.log(e);
+                }
+              )
+              .then(() => {
+                console.log('ok2');
+              }); */
 
       function getp2(p1res) {
         return new Promise((reso, rej) => {
@@ -74,14 +74,14 @@
       // async函数返回一个promise对象
       // 有错误没处理，内部就不会接下去执行，await同级后面的代码也不会接下去执行
       // await 相当于已经执行了一个then函数 而且返回的是then succ的res
-      async function test() {
+      async function login() {
         console.log('start');
         /* const res = await p1.then(
-          function(r) {
-            console.log(r);
-          },
-          function() {}
-        ); */
+                function(r) {
+                  console.log(r);
+                },
+                function() {}
+              ); */
         // const res = await p1.catch(() => {});
         const res1 = await p1;
 
@@ -95,8 +95,8 @@
         return res2;
       }
 
-      // console.log(test());
-      test().then(
+      // console.log(login());
+      login().then(
         function(r) {
           console.log('async ok', r);
         },
@@ -105,6 +105,66 @@
         }
       );
 
+      // thenable对象 定义then方法的对象
+      var obj = {
+        name: 'qq',
+        then(reso, rej) {
+          if (2 > 1) {
+            reso('大于');
+          } else {
+            rej('小于');
+          }
+        }
+      };
+      async function ta() {
+        // const r = await obj.then(res => console.log(res)); //obj.then is not a function
+        const r = await obj; //await将其'等同于'promise
+        console.log(r);
+      }
+      ta();
+
+      function sleep(interval) {
+        return new Promise((reso, rej) => {
+          setTimeout(() => {
+            reso();
+          }, interval);
+        });
+      }
+      async function onefive(interval) {
+        for (let i = 1; i <= 5; i += 1) {
+          console.log(i);
+          if (i == 3) {
+            break;
+          }
+          await sleep(interval);
+        }
+      }
+      onefive(2000);
+
+      // let pdemo = new Promise((reso, rej) => {
+      //   setTimeout(() => {
+      //     console.log(1);
+      //     reso('victory');
+      //     console.log(2);
+      //   }, 2000);
+      // });
+      // pdemo.then(function(r) {
+      //   setTimeout(() => {
+      //     console.log(123);
+      //     console.log(r);
+      //   }, 3000);
+      //   console.log(99);
+      // });
+
+      function dbFuc(db) {
+        //这里不需要 async
+        let docs = [{}, {}, {}];
+
+        // 可能得到错误结果
+        docs.forEach(async function(doc) {
+          await db.post(doc);
+        });
+      }
       console.log('----------------------async_await----------------------');
     </script>
   </body>
