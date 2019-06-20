@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        function jsonp(url,param,cb){
+            const srcStart = url.includes('?') ? '&':'?'
+
+            let rd = String(Math.random()*10).replace('.','')
+            let cbName = `myjsonp${rd}`
+            const srcEnd = `callback=${cbName}`
+
+            let paramsStr =''
+            for(let k of Object.keys(param)){
+                paramsStr += `${k}=${param[k]}&`
+            }
+
+            src = `${url}${srcStart}${paramsStr}${srcEnd}`
+            console.log(src)
+
+            let ele = document.createElement('script');
+            ele.src = src
+            document.body.appendChild(ele)
+
+            window[cbName] = function(d){
+                cb(d)
+                document.body.removeChild(ele)
+            }
+        }    
+        jsonp('https://suggest.taobao.com/sug',{
+            name: 'we',
+            age:235,
+            code: 'utf-8',
+            q: '水果'
+        },function(d){
+            console.log(d)
+        })
+    </script>
+</body>
+</html>

@@ -33,22 +33,21 @@
       // Response.setHeader('Access-Control-Allow-Origin','xx1.com,xx2.com') //*
 
       //JSONP
-      // -浏览器有同源策略，但是带有src属性的标签不受影响
-      // -生成一个script标签，向服务器发送请求，请求要带有一个callback参数，指定一个回调函数名字。
-      // -服务器收到请求后，动态生成JSON格式的数据，将它放到这个指定回调函数中也就是作为参数(如下面的thecb)传回来
-      // -页面上定义这个函数，就会立即执行，我们就拿到了返回的数据。作为参数的JSON数据，会被是为js对象，不是字符串，所以也不需要JSON.parse
+      // -用来解决跨域问题的非正式传输协议
+      // -浏览器有同源策略，ajax直接请求存在跨域无权限问题，但是带有src属性的标签不受影响
+      // -生成一个script标签发送请求，请求传一个回调函数参数给服务器
+      // -服务器动态生成js代码，调用这个回调函数。函数的参数是json格式数据，也就是客户端需要的数据
+      // -页面定义了这个函数，请求返回就调用了。我们根据参数也就获得了服务端的数据
 
-      function thecb(d) {
-        console.log(d);
+      function cb(data) {
+        console.log(data);
       }
-
       function addScriptTag() {
         let ele = document.createElement('script');
         ele.src =
-          'https://suggest.taobao.com/sug?code=utf-8&q=衣服&callback=thecb';
+          'https://suggest.taobao.com/sug?code=utf-8&q=衣服&callback=cb';
         document.body.appendChild(ele);
       }
-
       addScriptTag();
     </script>
     <!-- <script src="https://suggest.taobao.com/sug?code=utf-8&q=衣服&callback=cb"></script> -->
