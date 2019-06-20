@@ -5,27 +5,38 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>Document</title>
+    <script src="https://cdn.bootcss.com/snabbdom/0.7.3/snabbdom.js"></script>
+    <script src="https://cdn.bootcss.com/snabbdom/0.7.3/snabbdom-class.js"></script>
+    <script src="https://cdn.bootcss.com/snabbdom/0.7.3/snabbdom-props.js"></script>
+    <script src="https://cdn.bootcss.com/snabbdom/0.7.3/snabbdom-style.js"></script>
+    <script src="https://cdn.bootcss.com/snabbdom/0.7.3/snabbdom-eventlisteners.js"></script>
   </head>
   <body>
-    <ul id="list" style="color:red">
-      <li class="item" onclick="someFn">item 1</li>
-      <li class="item">item 2</li>
-    </ul>
+    <div id="container"></div>
+    <button id="change">点击change</button>
     <script>
       //vdom(virtual dom)是什么?为什么会存在vdom?
       // -虚拟DOM
-      // -用JS模拟DOM     -》用JS模拟DOM结构
+      // -用JS模拟DOM结构
+
       // -DOM操作太昂贵了(js运行效率高)
-      // -用JS替代对比层    -》DOM变化的对比，放在JS层来做 提高重绘性能
+      // -DOM变化的对比，放在JS层来做，提高重绘性能
 
       //类似
-      const vnode = {
+      const htmldemo = `<ul id="list" style="color:red">
+        <li class="item" onclick="someFn">
+          item 1
+        </li>
+        <li class="item">item 2</li>
+      </ul>`;
+      const vnodedemo = {
         sel: 'ul',
         data: {
           style: {
             color: 'red'
           }
         },
+        text: undefined,
         children: [
           {
             sel: 'li.item',
@@ -34,27 +45,57 @@
                 click: someFn
               }
             },
-            children: ['item 1']
+            text: 'item 1',
+            children: undefined
           },
           {
             sel: 'li.item',
             data: {},
-            children: ['item 2']
+            text: 'item 2',
+            children: undefined
           }
         ]
       };
 
+      //vdom如何应用 核心api是什么 ->table-jq.html
+      // -借鉴了snabbdom
+      // -h->把一些数据转化成vnode --》有子元素h('..标签..',{..属性..},[..子元素..])  无子元素h('..标签..',{..属性..},'字符串')
+      // -patch->把vnode转化成真实的DOM --》初次渲染patch(container,vnode)  再次渲染patch(vnode,newVnode)
+
+      var container = document.getElementById('container');
+
+      var h = snabbdom.h;
+      var patch = snabbdom.init([
+        snabbdom_class.default,
+        snabbdom_props.default,
+        snabbdom_style.default,
+        snabbdom_eventlisteners.default
+      ]);
+
+      var vnode = h('ul#list', { style: { color: 'skyblue' } }, [
+        h('li.item', { on: { click: someFn } }, ['item1']),
+        h('li.item', {}, ['item2'])
+      ]);
       function someFn() {
         alert();
       }
+      console.log(vnode);
+      console.log(patch(container, vnode) === vnode); //true
 
-      //vdom如何应用 核心api是什么
-      // -借鉴了snabbdom
-      // -h->把一些数据转化成vnode patch->把vnode转化成真实的DOM
+      var newvnode = h('ul#list', { style: { color: 'green' } }, [
+        h('li.item', {}, 'item1'),
+        h('li.item', { on: { click: someFn } }, 'itemB'),
+        h('li', {}, 'item3')
+      ]);
+
+      change.onclick = function() {
+        console.log(patch(vnode, newvnode) === newvnode); //true
+      };
 
       //介绍一下diff算法
       // -diff是linux和git的基本命令，以前主要是用来对比文本文件的
-      // -在虚拟DOM里面，是用来对比虚拟DOM节点的
+      // -DOM操作是昂贵的
+      // -用虚拟DOM方式优化的时候，会对比得出，必须更新的虚拟DOM节点，其它的不更新。找出的过程就需要diff算法
       // -主要有两块，createElement(container,vnode) updateElement(vnode,newvnode)
     </script>
   </body>

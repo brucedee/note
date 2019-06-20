@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+    <script src="https://cdn.bootcss.com/snabbdom/0.7.3/snabbdom.js"></script>
+    <script src="https://cdn.bootcss.com/snabbdom/0.7.3/snabbdom-class.js"></script>
+    <script src="https://cdn.bootcss.com/snabbdom/0.7.3/snabbdom-props.js"></script>
+    <script src="https://cdn.bootcss.com/snabbdom/0.7.3/snabbdom-style.js"></script>
+    <script src="https://cdn.bootcss.com/snabbdom/0.7.3/snabbdom-eventlisteners.js"></script>
+  </head>
+  <body>
+    <div id="container"></div>
+    <button onclick="change()">改变</button>
+    <script>
+      data = [
+        {
+          name: '姓名',
+          age: '年龄',
+          address: '地址'
+        },
+        {
+          name: '张三',
+          age: 12,
+          address: '北京'
+        },
+        {
+          name: '李四',
+          age: 15,
+          address: '上海'
+        },
+        {
+          name: '王五',
+          age: 20,
+          address: '广州'
+        }
+      ];
+
+      const container = document.getElementById('container');
+
+      var h = snabbdom.h;
+      var patch = snabbdom.init([
+        snabbdom_class.default,
+        snabbdom_props.default,
+        snabbdom_style.default,
+        snabbdom_eventlisteners.default
+      ]);
+      var vnode;
+      function render(d) {
+        var newVnode = h(
+          'table',
+          {},
+          d.map(item => {
+            let tds = [];
+            for (let k of Object.keys(item)) {
+              tds.push(h('td', {}, item[k] + ''));
+            }
+            return h('tr', {}, tds);
+          })
+        );
+
+        if (vnode) {
+          patch(vnode, newVnode);
+        } else {
+          patch(container, newVnode);
+        }
+        vnode = newVnode;
+      }
+
+      render(data);
+
+      function change() {
+        data[2].age = 6;
+        data[3].address = '深圳';
+        render(data);
+      }
+    </script>
+  </body>
+</html>

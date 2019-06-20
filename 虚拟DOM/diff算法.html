@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      //patch(container,vnode)
+      var vnode = {
+        sel: 'ul#list',
+        data: { title: 'hello' },
+        text: undefined,
+        children: [
+          {
+            sel: 'li.item',
+            data: {},
+            text: 'item1',
+            children: undefined
+          }
+        ]
+      };
+      var ahtml = `<ul id="list"><li class="item">item1</li></ul>`;
+      function createElement(vnode) {
+        var { sel, data = {}, text = '', children = [] } = vnode;
+        const tag = sel.replace(/[#.]/g, '@').split('@')[0];
+        const ele = document.createElement(tag);
+
+        for (const k of Object.keys(data)) {
+          ele.setAttribute(k, data[k]);
+        }
+        ele.innerText = text;
+
+        children.forEach(child => {
+          ele.appendChild(createElement(child));
+        });
+
+        return ele;
+      }
+      elem = createElement(vnode);
+      document.body.appendChild(elem);
+    </script>
+  </body>
+</html>
