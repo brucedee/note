@@ -7,12 +7,46 @@
     <title>Document</title>
   </head>
   <body>
+    <ul id="list" style="color:red">
+      <li class="item" onclick="someFn">item 1</li>
+      <li class="item">item 2</li>
+    </ul>
     <script>
       //vdom(virtual dom)是什么?为什么会存在vdom?
       // -虚拟DOM
       // -用JS模拟DOM     -》用JS模拟DOM结构
-      // -DOM操作太昂贵了
+      // -DOM操作太昂贵了(js运行效率高)
       // -用JS替代对比层    -》DOM变化的对比，放在JS层来做 提高重绘性能
+
+      //类似
+      const vnode = {
+        sel: 'ul',
+        data: {
+          style: {
+            color: 'red'
+          }
+        },
+        children: [
+          {
+            sel: 'li.item',
+            data: {
+              on: {
+                click: someFn
+              }
+            },
+            children: ['item 1']
+          },
+          {
+            sel: 'li.item',
+            data: {},
+            children: ['item 2']
+          }
+        ]
+      };
+
+      function someFn() {
+        alert();
+      }
 
       //vdom如何应用 核心api是什么
       // -借鉴了snabbdom
