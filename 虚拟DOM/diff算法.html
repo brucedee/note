@@ -8,39 +8,116 @@
   </head>
   <body>
     <script>
-      //patch(container,vnode)
+      //patch(container,vnode)  虚拟DOM节点转化成真实的DOM，放到空容器中
       var vnode = {
-        sel: 'ul#list',
+        //虚拟DOM节点
+        sel: 'ul#list.u',
         data: { title: 'hello' },
         text: undefined,
         children: [
           {
-            sel: 'li.item',
+            sel: 'li.item.item1',
             data: {},
             text: 'item1',
+            children: undefined
+          },
+          {
+            sel: 'li.item',
+            data: {},
+            text: 'item2',
             children: undefined
           }
         ]
       };
-      var ahtml = `<ul id="list"><li class="item">item1</li></ul>`;
+      var html = `<ul id="list" class="u" title="hello">
+        <li class="item item1">item1</li>
+        <li class="item">item2</li>
+      </ul>`; //目标DOM节点
+
       function createElement(vnode) {
-        var { sel, data = {}, text = '', children = [] } = vnode;
-        const tag = sel.replace(/[#.]/g, '@').split('@')[0];
-        const ele = document.createElement(tag);
+        var { sel, data = {}, text = '', children = [] } = vnode; //获取虚拟DOM节点的数据
+        const tag = sel.replace(/[#.]/g, '@').split('@')[0]; //获取标签
+
+        const ele = document.createElement(tag); //创建真实的DOM元素
+        let idName, className;
+        if (sel.includes('#')) {
+          idName = sel.match(/#[^.]*/g)[0].replace('#', '');
+          ele.setAttribute('id', idName);
+        }
+        if (sel.includes('.')) {
+          className = sel
+            .match(/\.[^#\.]*/g)
+            .map(item => item.replace('.', ''))
+            .join(' ');
+          ele.setAttribute('class', className);
+        }
 
         for (const k of Object.keys(data)) {
-          ele.setAttribute(k, data[k]);
+          //获取特性
+          ele.setAttribute(k, data[k]); //ele添加特性
         }
-        ele.innerText = text;
+        ele.innerText = text; //ele添加文本子元素
 
         children.forEach(child => {
-          ele.appendChild(createElement(child));
+          ele.appendChild(createElement(child)); //ele添加子元素 递归实现
         });
 
-        return ele;
+        return ele; // 返回真实的DOM节点
       }
       elem = createElement(vnode);
       document.body.appendChild(elem);
+
+      //patch(vnode,newvnode) 新的虚拟DOM节点对比旧的，得出需要更新节点，更新DOM需要更新的部分
+      var newvnode = {
+        //虚拟DOM节点
+        sel: 'ul#list.u',
+        data: { title: 'hello' },
+        text: undefined,
+        children: [
+          {
+            sel: 'li.item.item1',
+            data: {},
+            text: 'item1',
+            children: undefined
+          },
+          {
+            sel: 'li.item',
+            data: {},
+            text: 'itemB',
+            children: undefined
+          }
+        ]
+      };
+      var newhtml = `<ul id="list" class="u" title="hello">
+        <li class="item item1">item1</li>
+        <li class="item">itemB</li>
+        <li class="item">item3</li>
+      </ul>`; //目标DOM节点
+
+      // 假定情况,ul li标签属性都不变。方便处理
+      function updateChildren(vnode, newvnode) {
+        let children = vnode.children || [];
+        let newChildren = newvnode.children || [];
+
+        children.forEach((child, index) => {
+          var newChild = newChildren[index];
+
+          if (child.text == newChild.text) {
+            //标签相同
+            updateChildren(child, newChild);
+          } else {
+            replaceChild(child, newChild, index); //index,模拟知道哪一个变了
+          }
+        });
+      }
+
+      updateChildren(vnode, newvnode);
+
+      function replaceChild(child, newChild, index) {
+        console.log(child);
+        console.log(newChild);
+        console.log(index);
+      }
     </script>
   </body>
 </html>

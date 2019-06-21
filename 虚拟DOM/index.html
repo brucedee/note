@@ -95,8 +95,9 @@
       //介绍一下diff算法
       // -diff是linux和git的基本命令，以前主要是用来对比文本文件的
       // -DOM操作是昂贵的
-      // -用虚拟DOM方式优化的时候，会对比得出，必须更新的虚拟DOM节点，其它的不更新。找出的过程就需要diff算法
-      // -主要有两块，createElement(container,vnode) updateElement(vnode,newvnode)
+      // -用虚拟DOM方式优化的时候，会对比得出，必须更新的虚拟DOM节点，其它的不更新。找出的过程就需要diff算法。对比对象 -》vdom中应用diff算法是为了找出需要更新的节点
+      // -》diff实现 patch(container,vnode) patch(vnode,newvnode) -- 把vnode的信息统一渲染成真实的DOM插入到空的容器中  新旧vnode进行对比，将差异渲染成真实的DOM到对应的位置
+      // -主要有两块，createElement(vnode) updateChildren(vnode,newvnode) -》核心逻辑
     </script>
   </body>
 </html>
