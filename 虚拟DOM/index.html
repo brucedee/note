@@ -20,7 +20,7 @@
       // -用JS模拟DOM结构
 
       // -DOM操作太昂贵了(js运行效率高)
-      // -DOM变化的对比，放在JS层来做，提高重绘性能
+      // -DOM变化的对比，放在JS层来做，提高效率
 
       //类似
       const htmldemo = `<ul id="list" style="color:red">
@@ -59,8 +59,8 @@
 
       //vdom如何应用 核心api是什么 ->table-jq.html
       // -借鉴了snabbdom
-      // -h->把一些数据转化成vnode --》有子元素h('..标签..',{..属性..},[..子元素..])  无子元素h('..标签..',{..属性..},'字符串')
-      // -patch->把vnode转化成真实的DOM --》初次渲染patch(container,vnode)  再次渲染patch(vnode,newVnode)
+      // -h->把一些数据转化成vnode --》h('..标签..',{..属性..},text,[..子元素..])
+      // -patch->把vnode转化成真实的DOM --》初次渲染p atch(container,vnode)  再次渲染patch(vnode,newVnode)
 
       var container = document.getElementById('container');
 
