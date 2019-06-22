@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      //模版是什么
+      // -本质是字符串
+      // -与html格式很像，但是有很大区别。html是静态的。vue模版是动态的，有逻辑，如v-if v-for等可以判断循环
+      // -最终会渲染成html来显示
+
+      // -因为要处理逻辑，还要转换为html渲染页面，必须用js才能实现(图灵完备)
+      // -因此模版本身，最后必须转换成js代码，一个render函数
+
+      //width
+      const obj = {
+        name: 'abc',
+        age: 11,
+        cc() {
+          alert('c1');
+        }
+      };
+      //   function a() {
+      //     alert(obj.name);
+      //     alert(obj.age);
+      //     obj.cc();
+      //   }
+
+      function a() {
+        with (obj) {
+          alert(name);
+          alert(age);
+          cc();
+        }
+      }
+      // a();
+    </script>
+  </body>
+</html>

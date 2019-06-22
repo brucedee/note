@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+    <script src="https://cdn.bootcss.com/vue/2.6.10/vue.min.js"></script>
+  </head>
+  <body>
+    <div id="app">
+      <p>{{ name }}</p>
+      <p>{{ age }}</p>
+    </div>
+    <script>
+      const vm = new Vue({
+        el: '#app',
+        data: {
+          name: 'hua',
+          age: '16'
+        }
+      });
+    </script>
+    <script>
+      //什么是响应式
+      //-修改data属性后，vue立即监听到
+      //-data属性被代理到vm上
+
+      //defineProperty
+      console.log('---------------基本用法---------------');
+      //-基本用法
+      let obj = {
+        name: 'qq',
+        age: 10
+      };
+      console.log('basic obj:', obj);
+
+      //--定义属性
+      Object.defineProperty(obj, 'size', {
+        value: 'big'
+      });
+      //--获取定义属性的描述
+      var descSize = Object.getOwnPropertyDescriptor(obj, 'size');
+      console.log('descSize：', descSize); //{value:'big', writable:false, enumerable:false, configurable:false}
+
+      var descAge = Object.getOwnPropertyDescriptor(obj, 'age');
+      console.log('descAge:', descAge); //{value:10, writable:true, enumerable:true, configurable:true}
+
+      //--writable false
+      obj.size = 'small';
+      //--enumerable false
+      for (const key in obj) {
+        console.log(key); // name age
+      }
+      for (const k of Object.keys(obj)) {
+        console.log(k); //name age
+      }
+      //--configurable false
+      delete obj.size;
+
+      console.log('new obj', obj);
+
+      //   var objs = {
+      //     _val: 'dd',
+      //     category: 'animal',
+      //     type: 'dog',
+      //     get nick() {
+      //       console.log('get..nick');
+      //       return this._val;
+      //     },
+      //     set nick(newVal) {
+      //       console.log('set..nick');
+      //       this._val = newVal;
+      //     }
+      //   };
+      console.log('---------------get set---------------');
+      const objs = {
+        _val: 'gg',
+        category: 'animal',
+        type: 'dog'
+      };
+      console.log('basic objs:', objs);
+      Object.defineProperty(objs, 'nickname', {
+        get() {
+          console.log('get..nickname');
+          return this._val;
+        },
+        set(newVal) {
+          console.log('set..nickname');
+          this._val = newVal;
+        }
+      });
+      console.log('new objs:', objs);
+
+      console.log('-----------------模拟-----------------');
+      //模拟
+      var vmMock = {};
+      var dataMock = {
+        name: 'zhui',
+        age: 18
+      };
+      console.log('dataMock:', dataMock);
+      for (let k in dataMock) {
+        Object.defineProperty(vmMock, k, {
+          get() {
+            console.log('get..watch');
+            return dataMock[k]; //若var k... 此时k就变成了age 所以用let k
+          },
+          set(newVal) {
+            console.log('set..watch');
+            dataMock[k] = newVal;
+          }
+        });
+      }
+      console.log('vmMock', vmMock);
+    </script>
+  </body>
+</html>

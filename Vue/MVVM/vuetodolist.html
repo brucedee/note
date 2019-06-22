@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+    <script src="https://cdn.bootcss.com/vue/2.6.10/vue.min.js"></script>
+  </head>
+  <body>
+    <div id="app">
+      <input type="text" v-model="tit" />
+      <button @click="todo">点击</button>
+      <ul>
+        <li v-for="(item,index) in liArr">
+          {{ item }} <span @click="del(index)">x</span>
+        </li>
+      </ul>
+    </div>
+
+    <script>
+      const vm = new Vue({
+        el: '#app',
+        data: {
+          tit: null,
+          liArr: []
+        },
+        methods: {
+          todo() {
+            if (!this.tit) {
+              return;
+            }
+            this.liArr.push(this.tit);
+            this.tit = null;
+          },
+          del(i) {
+            this.liArr.splice(i, 1);
+          }
+        }
+      });
+    </script>
+  </body>
+</html>
