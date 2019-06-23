@@ -5,18 +5,32 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>Document</title>
+    <script src="vue2.5.13.js"></script>
   </head>
   <body>
+    <!-- 模版 -->
+    <div id="app">
+      <p>{{ price }}</p>
+    </div>
+
     <script>
+      //模版引擎 --最常见的输出是html文本(需要考虑转义，格式化，逻辑等)。也可以是text xml markdown。
+      // -基于模版 配合数据 构造出 字符串输出的一个组件，比如下面的函数
+      function demoRes(d) {
+        //demoRes-》函数模版引擎
+        const template = `${d.name}的年龄是${d.age}`; //template-》模版
+        return template;
+      }
+      const data = { name: 'hua', age: 20 }; //data-》数据
+      console.log(demoRes(data));
+
       //模版是什么
       // -本质是字符串
       // -与html格式很像，但是有很大区别。html是静态的。vue模版是动态的，有逻辑，如v-if v-for等可以判断循环
-      // -最终会渲染成html来显示
+      // -因为要处理逻辑，最终还要转为html，渲染页面
+      // -因此模版本身，最后必须转换成js代码，一个render函数(执行结果)
 
-      // -因为要处理逻辑，还要转换为html渲染页面，必须用js才能实现(图灵完备)
-      // -因此模版本身，最后必须转换成js代码，一个render函数
-
-      //width
+      //with用法示例
       const obj = {
         name: 'abc',
         age: 11,
@@ -29,7 +43,6 @@
       //     alert(obj.age);
       //     obj.cc();
       //   }
-
       function a() {
         with (obj) {
           alert(name);
@@ -37,7 +50,39 @@
           cc();
         }
       }
-      // a();
+      //a();
+
+      const vm = new Vue({
+        el: '#app',
+        data: {
+          price: 10
+        }
+      });
+
+      //手写render函数
+      //-模版中所有信息都包含在了render函数中
+      //-this即vm实例对象，data中的属性也代理到this中了
+      function render() {
+        //render函数-》模版引擎
+        with (this) {
+          //this-》数据
+          return _c(
+            'div',
+            {
+              attrs: {
+                id: 'app'
+              }
+            },
+            [_c('p', [_v(_s(price))])]
+          ); //return出去的是模版
+        }
+        // 源码执行找到code.render,打印获得
+        // with (this) { ------------------->string
+        //   return _c('div', { attrs: { id: 'app' } }, [
+        //     _c('p', [_v(_s(price))])
+        //   ]);
+        // }
+      }
     </script>
   </body>
 </html>

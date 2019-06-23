@@ -10675,6 +10675,7 @@ var createCompiler = createCompilerCreator(function baseCompile (
   }
   var code = generate(ast, options);
   console.log(code.render) //加的
+  console.log(typeof(code.render)) //加的
   return {
     ast: ast,
     render: code.render,
