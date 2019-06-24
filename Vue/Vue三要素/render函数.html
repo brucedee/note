@@ -35,9 +35,21 @@
           }
         }
       });
+      // render函数
+      // -从模版生成render函数也有一套逻辑，但已经工具化，不用关心
+      // --vue2.0开始支持预编译 -》开发环境写模版(M) 经过编译打包 生产环境下 变成JS代码(R)
 
-      //从模版生成render函数也有一套逻辑，但已经工具化，不用关心
-      // -vue2.0开始支持预编译 -》开发环境写模版(M) 经过编译打包 生产环境下 变成JS代码(R)
+      // -处理逻辑
+      // -v-model怎么实现 -》双向绑定，有get set。input通过value属性获取数据，这是get。输入框输入数据时，绑定oninput事件，对数据进行赋值，这是set
+      // -v-on:click怎么实现 -》渲染的时候绑定一个click事件，对应上methods里面的函数，它其实已经代理到vm上了
+      // -v-for怎么实现 -》_l函数对数据进行遍历，for循坏。每个数组元素都封装成一个li元素。最后一块返回，作为ul的子元素
+
+      // -最终转为html渲染页面
+      // --_c函数类似snabbdom的h函数，返回虚拟DOM节点 - 传入元素，属性，子元素，生成vnode
+
+      // --updateComponent函数中调用_update函数。_update函数传入vnode作为参数，它内部调用了patch函数，类似snabbdom的patch函数
+      // ---页面首次渲染的时候执行updateComponent函数，此时patch函数的用法是，将所有的vnode渲染到一个空的容器中
+      // ---data中每次修改属性的时候（响应式监听，set的时候）执行updateComponent函数，此时patch函数的用法是，对比新旧vnode，将差异渲染到页面
 
       function render() {
         //R
