@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      function setCookie(name, value, expires) {
+        if (expires) {
+          const date = new Date();
+          date.setTime(date.getTime() + expires * 24 * 60 * 60 * 1000);
+          const expire = 'expires=' + date.toGMTString();
+          console.log(expire);
+
+          document.cookie = `${name}=${value};${expire}`;
+        } else {
+          document.cookie = `${name}=${value}`;
+        }
+      }
+
+      setCookie('age', 12);
+
+      function getCookie(name) {
+        const theName = name + '=';
+        const arr = document.cookie.split(';');
+        console.log(arr);
+        for (let i = 0; i < arr.length; i += 1) {
+          if (arr[i].trim().indexOf(theName) == 0)
+            return arr[i].trim().substr(theName.length); //for循环找到了，可以终止。这里return 必须在函数里
+        }
+        return '';
+      }
+      console.log(getCookie('age'));
+
+      function checkCookie() {
+        const un = getCookie('username');
+        if (un == '') {
+          const user = prompt();
+          if (user != null && user != '') {
+            setCookie('username', user);
+          }
+        } else {
+          alert('welcome ' + un);
+        }
+      }
+
+      checkCookie();
+    </script>
+  </body>
+</html>

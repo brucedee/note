@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      //cookie
+      //-用于客户端和服务器通讯
+      //--用户访问页面，信息可以记录在cookie中。下次访问，可以从cookie中读取
+      //--浏览器从服务器请求页面时，该页面的cookie会被添加到请求中。服务器就获取了用户信息
+      //-因为有本地存储功能，被'借用'作为存储 -》 存储量太小 影响获取资源端效率 需要封装
+
+      //-操作
+      //--设置(name=value)
+      document.cookie = 'username=hua';
+      document.cookie = 'psw=123';
+      //--获取
+      console.log(document.cookie);
+      //-删除
+      //--默认情况下，关闭浏览器cookie就没了
+      //--除非添加了过期时间(expires)
+      setTimeout(() => {
+        const lowerDate = `username=;expires=${new Date('2018-01-01')}`;
+        console.log(lowerDate);
+        document.cookie = lowerDate;
+      }, 5000);
+    </script>
+  </body>
+</html>
