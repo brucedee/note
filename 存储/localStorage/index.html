@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>localStorage</title>
+  </head>
+  <body>
+    <script>
+      //localStorage
+      //-操作
+      //--设置
+      localStorage.setItem('local1', 'aa');
+      localStorage.local2 = 'bb';
+      localStorage['local3'] = 'cc';
+      //--获取
+      console.log(localStorage.getItem('local1')); //aa
+      console.log(localStorage.getItem('local2')); //bb
+      console.log(localStorage.getItem('local3')); //cc
+      //--删除 除非人为删除，否则长期保留
+      localStorage.removeItem('local1');
+      delete localStorage.local2;
+      console.log(localStorage.getItem('local1')); //null
+      console.log(localStorage.getItem('local2')); //null
+      console.log(localStorage.getItem('local3')); //cc
+      localStorage.clear();
+      console.log(localStorage.getItem('local3')); //cc
+
+      localStorage.setItem('localx', 'xx');
+
+      setTimeout(() => {
+        location.href = 'http://127.0.0.1:5500/%E5%AD%98%E5%82%A8/demo.html'; //有，另一个标签打开有
+      }, 6000);
+    </script>
+  </body>
+</html>

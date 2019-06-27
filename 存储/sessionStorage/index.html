@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>sessionStorage</title>
+  </head>
+  <body>
+    <script>
+      //https://blog.csdn.net/mydistance/article/details/84545768 为什么使用token？session与token的区别
+
+      //sessionStorage
+      //-操作
+      //--设置
+      sessionStorage.setItem('s1', 'qq');
+      sessionStorage.s2 = 'ww';
+      sessionStorage['s3'] = 'ee';
+      //--获取
+      console.log(sessionStorage.getItem('s1')); //qq
+      console.log(sessionStorage.getItem('s2')); //ww
+      console.log(sessionStorage.getItem('s3')); //ee
+      //--删除 浏览器或者标签页关闭，也会被清掉
+      sessionStorage.removeItem('s1');
+      delete sessionStorage.s2;
+      console.log(sessionStorage.getItem('s1')); //null
+      console.log(sessionStorage.getItem('s2')); //null
+      console.log(sessionStorage.getItem('s3')); //null
+      sessionStorage.clear();
+      console.log(sessionStorage.getItem('s3')); //null
+
+      sessionStorage.setItem('sx', 'xx');
+      setTimeout(() => {
+        //location.href = 'http://127.0.0.1:5500/%E5%AD%98%E5%82%A8/demo.html'; //有，另一个标签打开无
+      }, 6000);
+
+      window.addEventListener('storage', function(e) {
+        console.log(11, e);
+        alert();
+      });
+    </script>
+  </body>
+</html>
