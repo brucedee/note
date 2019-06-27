@@ -11,6 +11,38 @@
       //响应式 - vue如何监听到data每个属性变化
       //模版引擎 - vue的模版如何被解析，指令如何处理
       //渲染 - vue的模版如何被渲染成html，以及渲染过程
+
+      //vue的整个实现流程
+      //-解析模板成render函数
+      //--with的用法--this即vm
+      //--模板中的所有信息都被render函数包含
+      //--模板中用到的data中的属性，都变成了js变量
+      //--模板中的v-if v-for v-on都变成了js逻辑
+      //--render函数返回vnode
+
+      //响应式开始监听
+      //-Object.defineProperty--通过这个函数实现了，对data中的每个属性get和set的监听
+      //-将data的属性代理到了vm实例
+
+      //首次渲染，显示页面，且绑定依赖
+      //-初次渲染,执行updateComponent，执行vm._render()
+      //-执行render函数，会访问到data中的属性
+      //-会被响应式的get方法监听到
+      //--为什么要监听get，直接set不行吗 ？ 不行
+      //---data中有很多属性，有的用到，有的没用到
+      //---被用到的会走get，不被用到的不会走到get
+      //---没走get的属性，set的时候也无需关心
+      //---避免重复渲染
+
+      //-执行updateComponent,会走到vdom的patch方法
+      //-patch将vnode渲染成DOM，初次渲染完成
+
+      //data属性变化，触发再次渲染
+      //-修改属性,被响应式的set监听到
+      //-set中执行updateComponent
+      //-updateComponent重新执行vm._render()
+      //-生成的vnode和preVnode，通过patch进行对比
+      //-渲染到html中
     </script>
   </body>
 </html>
