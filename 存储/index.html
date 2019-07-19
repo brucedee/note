@@ -15,23 +15,30 @@
       //--localStorage sessionStorage 不参与
 
       //-生命周期
-      //--cookie 可设置失效时间，没有设置，则默认关闭浏览器后失效
+      //--cookie 可设置expires失效时间，未设置，则默认关闭浏览器后失效
       //--localStorage 除非手动清除，否则长期保留
-      //--sessionStorage 仅在当前网页会话下有效，关闭网页（或者浏览器）就会被清除
+      //--sessionStorage 关闭网页（或者浏览器）就会被清除
+
+      //-作用域
+      //--cookie 可设置path路径，未设置，则当前页面，兄弟页面，子页面
+      //--localStorage 全局
+      //--sessionStorage 仅在当前网页会话下有效(当前页面，或者链接跳转后的页面)
 
       //-存放数据大小
       //--cookie 4kb
       //--localStorage sessionStorage 5M
 
-      //易用性
+      //-易用性
       //--cookie 需要封装，原生api不友好
       //--localStorage sessionStorage 原生api可接受，亦可再封装
 
       //cookie session
       //cookie 客户端保存用户信息的一种机制，用来记录用户的一些信息
       //session 服务器端保存的一种数据结构，用来跟踪用户状态
-      //session默认存放在服务器的文件里，当然，文件，数据库，内存中都可以
-      //session的运行依赖session id。session是存在cookie中的，浏览器禁用cookie的话，session也会失效。但可以通过其它方式，如在url中传递session_id
+      //session 默认存放在服务器的文件里，当然，文件，数据库，内存中都可以
+      //session 的运行依赖session id。session id是存在cookie中的，浏览器禁用cookie的话，session也会失效。但可以通过其它方式，如在url中传递session_id
+
+      //session token --》https://blog.csdn.net/mydistance/article/details/84545768 为什么使用token？session与token的区别
     </script>
   </body>
 </html>

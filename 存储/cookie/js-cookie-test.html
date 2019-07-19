@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+    <script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.js"></script>
+  </head>
+  <body>
+    <script>
+      const dtime = new Date(Date.now() + 24 * 60 * 60 * 1000).toUTCString();
+      document.cookie = `ck=999888;expires=${dtime};`;
+
+      //js-cookie
+      //-set -》 path默认为 /
+      Cookies.set('name', 'bruce');
+      Cookies.set('password', '123', { expires: 7 });
+      Cookies.set('sex', 'male', {
+        expires: 1,
+        path: ''
+      });
+
+      //-get
+      console.log(Cookies.get('name')); // bruce
+      console.log(Cookies.get('names')); // undefined
+      console.log(Cookies.get()); // {sex: 'male',demo: 'dm',demo4: 'd4',ck: '999888',name: 'bruce',password: '123',obj: '{"name":"hua","age":12}'};
+      console.log(document.cookie); // sex=male; demo=dm; demo4=d4; ck=999888; name=bruce; password=123; obj={%22name%22:%22hua%22%2C%22age%22:12}
+
+      //-remove
+      document.cookie = 'demo=dm';
+      Cookies.remove('demo'); // 删除不了
+      Cookies.set('demo1', 'd1');
+      Cookies.remove('demo1');
+      Cookies.set('demo2', 'd2', { expires: 2 });
+      Cookies.remove('demo2');
+      Cookies.set('demo3', 'd3', { path: '/' });
+      Cookies.remove('demo3');
+      Cookies.set('demo4', 'd4', { path: '' }); // 设置了不为/的path
+      Cookies.remove('demo4'); // 删除不了
+      Cookies.set('demo5', 'd5', { path: '' });
+      Cookies.remove('demo5', { path: '' }); // 需要设置'删除path'
+
+      //-cookie中存对象
+      console.log('-------------');
+      Cookies.set('obj', {
+        name: 'hua',
+        age: 12
+      });
+      const obj = Cookies.get('obj');
+      console.log(obj); // "{"name":"hua","age":12}"
+      console.log(obj.name); // undefined
+      console.log(JSON.parse(obj).name); // hua
+
+      console.log(Cookies.getJSON()); // {sex: 'male',demo: 'dm',demo4: 'd4',ck: 999888,name: 'bruce',password: 123,obj: { name: 'hua', age: 12 }}
+      console.log(Cookies.getJSON().obj.name); // hua
+      console.log(Cookies.getJSON('obj').name); // hua
+    </script>
+  </body>
+</html>

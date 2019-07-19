@@ -12,39 +12,42 @@
       //-用于客户端和服务器通讯
       //--用户访问页面，信息可以记录在cookie中。下次访问，可以从cookie中读取
       //--浏览器从服务器请求页面时，该页面的cookie会被添加到请求中。服务器就获取了用户信息
-      //-因为有本地存储功能，被'借用'作为存储 -》 存储量太小 影响获取资源端效率 需要封装
+      //-因为有本地存储功能，被'借用'作为存储 -》 存储量太小 影响获取资源的效率 需要封装
 
       //-操作
       //--设置(name=value)
-      document.cookie = 'username=hua';
-      document.cookie = 'psw=123;';
+      document.cookie = 'cName1=cValue1';
+      document.cookie = 'username=hua1;path=/'; // path告诉浏览器cookie路径
+      document.cookie = `psw=123;expires=${new Date(
+        Date.now() + 5000
+      ).toUTCString()}`; // expires告诉浏览器过期时间
+
       //--获取
       console.log(document.cookie);
+
       //-删除
       //--默认情况下，关闭浏览器cookie就没了
       //--除非添加了过期时间(expires)
-      setTimeout(() => {
-        const lowerDate = `username=;expires=${new Date('2018-01-01')}`;
-        console.log(lowerDate);
-        document.cookie = lowerDate;
-      }, 5000);
 
       //封装
-      function setCookie(name, value, expires) {
-        if (expires) {
-          const date = new Date();
-          date.setTime(date.getTime() + expires * 24 * 60 * 60 * 1000);
-          const expire = 'expires=' + date.toGMTString();
-          console.log(expire);
+      //-set
+      function setCookie(name, value, expireDay) {
+        if (expireDay) {
+          const expires =
+            'expires=' +
+            new Date(
+              Date.now() + expireDay * 24 * 60 * 60 * 1000
+            ).toUTCString();
+          console.log(expires);
 
-          document.cookie = `${name}=${value};${expire}`;
+          document.cookie = `${name}=${value};${expires}`;
         } else {
           document.cookie = `${name}=${value}`;
         }
       }
+      setCookie('age', 12, 1);
 
-      setCookie('age', 12);
-
+      //-get
       function getCookie(name) {
         const theName = name + '=';
         const arr = document.cookie.split(';');
@@ -57,6 +60,7 @@
       }
       console.log(getCookie('age'));
 
+      //-check
       function checkCookie() {
         const un = getCookie('username');
         if (un == '') {
@@ -68,11 +72,14 @@
           alert('welcome ' + un);
         }
       }
+      /* setTimeout(() => {
+        checkCookie();
+      }, 5000); */
 
-      // checkCookie();
-
+      // 测试path
       setTimeout(() => {
-        //location.href = 'http://127.0.0.1:5500/%E5%AD%98%E5%82%A8/demo.html'; //无，另一个标签打开无
+        // location.href = 'http://127.0.0.1:5500/%E5%AD%98%E5%82%A8/cookie/test.html'; //有
+        // location.href = 'http://127.0.0.1:5500/%E5%AD%98%E5%82%A8/demo.html'; //无 除了username 因为设置了path为/
       }, 6000);
     </script>
   </body>
