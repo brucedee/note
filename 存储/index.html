@@ -39,6 +39,17 @@
       //session 的运行依赖session id。session id是存在cookie中的，浏览器禁用cookie的话，session也会失效。但可以通过其它方式，如在url中传递session_id
 
       //session token --》https://blog.csdn.net/mydistance/article/details/84545768 为什么使用token？session与token的区别
+      //-session弊端
+      //--服务器压力增大 每个用户通过认证后，都会将数据保存在服务器的内存中，用户量增大后..
+      //--跨站请求伪造CSRF(cross-site request forgery) session是基于cookie进行用户识别的，cookie若被截获..
+      //--扩展性不强 如果将来搭建多个服务器，session数据是保存在内存中的，用户第一次访问服务器1，
+      //  当再次请求时可能访问的是服务器2，服务器2获取不到session信息，就判断用户没登录过
+
+      //-token
+      //--认证成功后，会对当前用户数据进行加密，生成一个加密字符串token，返还给客户端（服务器端并不进行保存）
+      //--
+      //--再次访问时，服务器对传来的token进行解密，解密完成后进行用户数据查询，查询成功，则通过认证，实现状态保持。
+      //  就算有多台服务器，服务器也只是做解密和查询，不需要保留用户的认证信息或者会话信息。也就是不需要考虑在哪一台服务器登录了，为应用的扩展提供了便利
     </script>
   </body>
 </html>
