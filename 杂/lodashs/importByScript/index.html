@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+    <script src="./lodash-4.17.15.js"></script>
+    <style>
+      .box {
+        width: 100px;
+        height: 100px;
+        background: grey;
+      }
+      .box.sp {
+        background: skyblue;
+      }
+      .box.sps {
+        background: orange;
+      }
+    </style>
+  </head>
+  <body>
+    <input id="txt1" placeholder="正常" /><br />
+    <input id="txt2" placeholder="debounce" />
+    <input id="txt3" placeholder="throttle" />
+    <hr />
+    <input id="txt4" placeholder="lodash debounce" />
+    <input id="txt5" placeholder="lodash throttle" />
+    <hr />
+    <div class="box">正常</div>
+    <div class="box sp">throttle</div>
+    <div class="box sps">debounce</div>
+    <script>
+      //debounce 防抖 --函数调用一段时间后，再执行(在这段时间内又调用时，重新计算执行时间)
+      function debounce(fn, delay = 1000) {
+        let timer;
+
+        return function() {
+          if (timer) {
+            clearTimeout(timer);
+          }
+          timer = setTimeout(() => {
+            fn.apply(this, arguments);
+          }, delay);
+        };
+      }
+
+      document.getElementById('txt1').addEventListener('keyup', function(e) {
+        console.log(e.target.value);
+      });
+      document.getElementById('txt2').addEventListener(
+        'keyup',
+        debounce(function(e) {
+          console.log(e.target.value);
+        })
+      );
+      document.getElementById('txt3').addEventListener(
+        'keyup',
+        throttle(function(e) {
+          console.log(e.target.value);
+        })
+      );
+      document.getElementById('txt4').addEventListener(
+        'keyup',
+        _.debounce(function(e) {
+          console.log(e.target.value);
+        })
+      );
+      document.getElementById('txt5').addEventListener(
+        'keyup',
+        _.throttle(function(e) {
+          console.log(e.target.value);
+        }, 3000)
+      );
+
+      //throttle 节流 --每隔多久执行一次
+      function throttle(fn, interval = 1000) {
+        let timer, last, now;
+
+        return function() {
+          now = Date.now();
+
+          if (last && now - last < interval) {
+            if (timer) {
+              clearTimeout(timer);
+            }
+            timer = setTimeout(() => {
+              last = now;
+              fn.apply(this, arguments);
+            }, interval);
+          } else {
+            last = now;
+            fn.apply(this, arguments);
+          }
+        };
+      }
+
+      document
+        .getElementsByClassName('box')[0]
+        .addEventListener('mousemove', function(e) {
+          console.log(e.clientX, e.clientY);
+        });
+      document.getElementsByClassName('box')[1].addEventListener(
+        'mousemove',
+        throttle(function(e) {
+          console.log(e.clientX, e.clientY);
+        })
+      );
+      document.getElementsByClassName('box')[2].addEventListener(
+        'mousemove',
+        debounce(function(e) {
+          console.log(e.clientX, e.clientY);
+        })
+      );
+
+      //debounce和throttle区别
+      //-debounce不会马上执行，只有执行后的时间，大于等于设置好的时间后才会执行，否则一直不会执行
+      //-throttle会马上执行一次，并且没隔设定的一段时间，会执行一次
+    </script>
+  </body>
+</html>

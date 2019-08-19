@@ -1,0 +1,21 @@
+{
+  "name": "lodashs",
+  "version": "1.0.0",
+  "description": "",
+  "main": "lodash-4.17.15.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "webpack --watch",
+    "dev": "webpack --mode development --watch"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "webpack": "^4.39.2",
+    "webpack-cli": "^3.3.6"
+  },
+  "dependencies": {
+    "lodash": "^4.17.15"
+  }
+}
