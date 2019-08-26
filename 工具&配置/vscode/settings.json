@@ -1,0 +1,27 @@
+{
+  //自动识别编码，防止乱码
+  "files.autoGuessEncoding": true,
+  //保存格式化
+  "editor.formatOnSave": true,
+  //vetur
+  "vetur.format.defaultFormatterOptions": {
+    "prettyhtml": {
+      "printWidth": 200 //默认80 行长度限制，超过则标签换行
+    }
+  },
+  //对这些文件开启eslint检测
+  "eslint.validate": [
+    "javascript",
+    "javascriptreact",
+    {
+      "language": "vue",
+      "autoFix": true
+    },
+    {
+      "language": "html",
+      "autoFix": true
+    }
+  ],
+  //ts es7
+  "javascript.implicitProjectConfig.experimentalDecorators": true
+}
