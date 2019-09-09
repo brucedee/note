@@ -23,5 +23,8 @@
     "prettyhtml": {
       "printWidth": 200 //默认80 行长度限制，超过则标签换行
     }
-  }
+  },
+  //emmet
+  //使非html标签tab补全
+  "emmet.triggerExpansionOnTab": true
 }
