@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+    <script src="../vue.js"></script>
+    <script type="text/x-template" id="xt">
+      <h3>h3333</h3>
+    </script>
+  </head>
+  <body>
+    <div id="app">
+      <p>msg: {{ $root.msg }}</p>
+      <p>getnum: {{ $root.getnum() }}</p>
+      <p>------root------</p>
+      <cg></cg>
+      <p>------cg------</p>
+      <ca></ca>
+      <p>------ca------</p>
+      <cb></cb>
+      <p>------cb cbchild------</p>
+      <hr />
+      <tree-folder :folder="folders"></tree-folder>
+      <hr />
+      <cinline inline-template><p>hello</p></cinline>
+      <cxt></cxt>
+      <demo></demo>
+    </div>
+    <script>
+      //访问元素&组件
+      //-访问根实例
+      //--每个new Vue实例的子组件中，其根实例可以通过$root属性进行访问
+      //--对demo或小型应用来说很方便。扩展到中大型型时就不然了，推荐vuex
+
+      const ca = {
+        template: `
+            <div>
+                <p>{{$root.msg}} from ca</p>
+            </div>
+          `,
+        beforeCreate() {
+          console.log('cabeforeCreate');
+          console.log(this.$root.getnum);
+          this.$root.msg = 'hello changed by ca';
+        },
+        created() {
+          console.log('caCreated');
+        },
+        beforeMount() {
+          console.log('cabeforeMount');
+        },
+        mounted() {
+          console.log('来自ca:' + this.$root.msg);
+        }
+      };
+
+      Vue.component('cg', {
+        template: `<div>
+                <p>{{$root.msg+' from cg'}}</p>
+            </div>`
+      });
+
+      //-访问父级组件实例
+      //--$parent属性可以从一个子组件，访问父组件的实例。提供了一种机会，随时触达父组件，替代将数据以prop方式传入子组件
+      //--层级多了，容易失控
+
+      //-依赖注入
+      //--provide选项允许我们指定，给后代组件的数据/方法
+      //--inject选项接收
+      //--可以看作是大范围有效的prop -》有负面影响，将组件和它们的组织方式耦合起来，使重构变得困难，同时也是非响应式的
+
+      //-访问子组件实例或子元素
+      //--尽管存在prop和事件，仍可能需要直接访问子组件。可以通过ref特性为子组件赋予一个ID引用
+      //--$refs只会在组件渲染完成之后生效。并且不是响应式的，应避免在模版和计算属性中访问$refs
+
+      const cbChild = {
+        template: `<div>
+            cbchild parent:<b>{{$parent.name}} {{$parent.$parent.name}}</b>
+            <input type="text" ref="ip"/>
+            <p>{{name}}</p>
+            <p>{{names}}</p>
+            <h6>ga1:{{ga1()}}</h6>
+            </div>`,
+        data() {
+          return {
+            name: 'cbchildname'
+          };
+        },
+        computed: {
+          names() {
+            return 'computed:' + this.name;
+          }
+        },
+        inject: ['ga1'],
+        mounted() {
+          this.$parent.name = 'cbname1';
+          console.log('cbchild mounted name:' + this.name);
+        },
+        methods: {
+          fc() {
+            this.$refs.ip.focus();
+          }
+        }
+      };
+      const cb = {
+        template: `
+            <div>
+                <p>cb parent: {{$parent.name}} {{$root.name}} </p>
+                <cbChild ref="cc"></cbChild>
+                <p>cbname: {{name}}</p>
+                <button @click="childFocus">聚焦子元素input</button>
+                <cbChild v-for="n of 3" :key="n" ref="ccs"></cbChild>
+            </div>
+
+          `,
+        data() {
+          return {
+            name: 'cbname'
+          };
+        },
+        provide() {
+          return {
+            ga1: this.ga1
+          };
+        },
+        mounted() {
+          this.$refs.cc.name = 'gogo';
+          console.log('$refs.cc.name:' + this.$refs.cc.name);
+          console.log('$refs.ccs', this.$refs.ccs);
+        },
+        methods: {
+          childFocus() {
+            this.$refs.cc.fc();
+          },
+          ga1() {
+            return 'ga1111';
+          }
+        },
+        components: {
+          cbChild
+        }
+      };
+
+      //程序化的事件侦听器
+      //-$on(eventName,eventHandler)--侦听一个事件
+      //-$off(eventName,eventHandler)--停止侦听一个事件
+      //-$once(eventName,eventHandler)--一次性侦听一个事件
+
+      //循环引用
+      //-递归引用--确保是条件性的，不然会陷入死循环
+
+      //-组件之间循环引用
+      //--全局注册时，悖论自动解开
+      //--局部注册时
+      Vue.component('tree-folder', {
+        template: `<p>
+            <span>{{folder.name}}</span>
+            <tree-folder-content :children="folder.children"></tree-folder-content>
+            </p>`,
+        props: ['folder']
+      });
+      Vue.component('tree-folder-content', {
+        template: `<ul>
+                <li v-for="item in children">
+                        <tree-folder :folder="item"></tree-folder>
+                </li>
+            </ul>`,
+        props: ['children']
+      });
+
+      //模版定义的替代品
+      //-内联模版
+      //--使用内容作为模版
+      const cinline = {
+        template: `<div>
+                <i>替代</i>
+                <slot></slot>
+            </div>`
+      };
+      //-x-Template
+      const cxt = {
+        template: '#xt'
+      };
+
+      //控制更新
+      //-强制更新--$forceupdate
+      //-静态组件--v-once
+
+      Vue.component('demo', {
+        template: '<div v-once>dagrsrt<p>zzz</p>{{mg}}</div>', //加了v-once 3s后mg不更新
+        data() {
+          return {
+            mg: 7777
+          };
+        },
+        mounted() {
+          setTimeout(() => {
+            this.mg = 8888;
+          }, 3000);
+        }
+      });
+
+      const vm = new Vue({
+        el: '#app',
+        data: {
+          msg: 'hello',
+          name: 'rootname',
+          folders: {
+            name: '名字',
+            children: [
+              {
+                name: '子集1'
+              },
+              {
+                name: '子集2',
+                children: [
+                  {
+                    name: '子集21'
+                  },
+                  {
+                    name: '子集22'
+                  },
+                  {
+                    name: '子集23'
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        // provide: { //报错
+        //   ga: this.getAge
+        // },
+        // provide() { //对的
+        //   return {
+        //     ga: this.getAge
+        //   };
+        // },
+        beforeCreate() {
+          console.log('rootbeforeCreate');
+        },
+        created() {
+          console.log('rootCreated');
+        },
+        beforeMount() {
+          console.log('rootbeforeMount');
+        },
+        mounted() {
+          console.log('来自根实例:' + this.$root.msg);
+        },
+        methods: {
+          getnum() {
+            return 100;
+          },
+          getAge() {
+            return 'age18';
+          }
+        },
+        components: {
+          ca,
+          cb,
+          cinline,
+          cxt
+        }
+      });
+    </script>
+  </body>
+</html>

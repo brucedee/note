@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+    <script src="vue.js"></script>
+  </head>
+  <body>
+    <div id="app">
+      {{ msg }}
+      <p :title="tit">移上来</p>
+      <hr />
+      <p v-if="seen">看到我了</p>
+      <ul>
+        <li v-for="todo in todos">{{ todo.text }}</li>
+      </ul>
+      <hr />
+      <p>{{ msgForEvent }}</p>
+      <button @click="reverse">反转</button><br /><br />
+      <input type="text" v-model="msgForForm" />
+      <span>{{ msgForForm }}</span>
+      <hr />
+      <ol>
+        <todo-item
+          v-for="(todo,index) in todos"
+          :todocp="todo"
+          :key="index"
+        ></todo-item>
+      </ol>
+    </div>
+    <script>
+      //Vue
+      //-是一套用于构建用户界面的渐进式框架
+      //--被设计为可以自底向上逐层应用
+      //--核心库只关注视图层
+      //--能够为复杂的单页应用提供驱动
+
+      //组件系统-Vue的另一个重要概念
+      //-本质上是一个拥有预定义选项的一个 Vue 实例
+      //-它是一种抽象，允许我们使用小型、独立和通常可复用的组件构建大型应用
+      //-几乎任意类型的应用界面都可以抽象为一个组件树
+      Vue.component('todo-item', {
+        props: ['todocp'],
+        template: '<li>{{todocp.text}}</li>'
+      });
+
+      const vm = new Vue({
+        el: '#app',
+        data: {
+          //声明式渲染 -数据和DOM建立了关联，所有东西都是响应式的
+          msg: 'hello Vue', //Vue.js 的核心是一个允许采用简洁的模板语法,来声明式地将数据渲染进 DOM 的系统  -DOM文本
+          tit: '页面加载与' + new Date().toJSON(), //带有v-前缀的的vue特性称为指令 -DOM特性  ->绑定特性v-bind :
+
+          //条件和循坏 -不仅可以把数据绑定到DOM文本或特性，还可以绑定到DOM结构
+          seen: true, // 条件
+          todos: [
+            // 循坏
+            { text: '学习 JavaScript' },
+            { text: '学习 Vue' },
+            { text: '整个牛项目' }
+          ],
+
+          //处理用户输入
+          msgForEvent: 'how are you', //绑定事件v-on @
+          msgForForm: '' //表单输入和应用之间，双向绑定 ->v-model
+        },
+        methods: {
+          reverse() {
+            //没有触碰DOM，所有的DOM操作都由Vue处理，编写的代码只需关心逻辑层
+            this.msgForEvent = this.msgForEvent
+              .split('')
+              .reverse()
+              .join('');
+          }
+        }
+      });
+    </script>
+  </body>
+</html>

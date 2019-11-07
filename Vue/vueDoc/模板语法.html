@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+    <script src="vue.js"></script>
+  </head>
+  <body>
+    <div id="app">
+      <p>{{ msg }}</p>
+      <p v-once>{{ msgOnce }}</p>
+      <hr />
+      <p>{{ rawHtml }}</p>
+      <p :title="titleP" v-html="rawHtml">{{ rawHtml }}</p>
+      <hr />
+      <button :disabled="disabledIf">点我</button>
+      <hr />
+      <p>{{ msg + 1 }}</p>
+      <p>{{ disabledIf ? 'yes' : 'no' }}</p>
+      <p>
+        {{
+          msg
+            .split('')
+            .reverse()
+            .join('')
+        }}
+      </p>
+      <hr />
+      <p :title="expression+1">expression demo</p>
+      <p>{{ JSON.stringify(obj) }}</p>
+      <hr />
+      <p v-if="seen">显示我</p>
+      <p v-bind:[foo+1]="foo">动态参数测试</p>
+      <form action="" @submit.prevent="onSubmit">
+        <button type="submit">提交</button>
+      </form>
+    </div>
+    <script>
+      //模板语法
+      //-Vue使用了基于HTML的模板语法，允许将DOM绑定至底层Vue实例的数据，所有Vue模板都是合法的HTML
+      //-Vue将模板编译成虚拟DOM渲染函数，结合响应系统，智能计算最少需要渲染多少组件，将DOM操作减少到最少
+      //-也可不用模板，直接写render函数，使用可选的jsx语法
+
+      const vm = new Vue({
+        el: '#app',
+        data: {
+          //插值
+          //-文本
+          //--数据绑定最常用的形式是，使用Mustache(双大括号)语法，绑定文本
+          //--执行一次性插值用v-once，数据改变，插值处内容不会变
+          msg: 'hello',
+          msgOnce: 'world',
+
+          //-原始HTML
+          //--双大括号会将数据解释为普通文本
+          //--若要输出真正的html，需要v-html
+          rawHtml: '<span style="color:red" :title="titleSPAN">i am red</span>',
+          titleP: 'title p',
+          titleSPAN: 'title span', //不显示，因为会忽略解析rawHtml中的数据绑定
+
+          //特性
+          //--Mustache语法，不能作用在html的特性上，应使用v-bind指令
+          //--对于布尔特性，只要存在就意味着true
+          disabledIf: false, //除了false还有null和undefined。则disabled属性不会包含在，渲染出来的button元素中
+
+          //表达式
+          //-上面都只绑定，简单的属性键值。Vue还提供了完全的js表达式支持
+          //-有个限制是，每个绑定只能包含单个表达式 -》{{var a=1}}语句不行 {{if(2>1) return msg}}流控制也不行
+          //-模板表达式都被放在沙盒中，只能访问全局变量的一个白名单，如Date和Math等内置函数内置对象-》不应该试图访问，用户定义的全局变量
+          expression: 'tit',
+          obj: {
+            name: 'zhui',
+            age: 18
+          },
+
+          //指令
+          //-带有v-前缀的特殊特性，预期值是单个js表达式,表达式的值改变时，响应式的作用于DOM
+          //-带参数-》<a v-bind:href="url">...</a>或者<a v-on:click="doSomething">
+          //-修饰符-》用于指出一个指令，以特殊方式绑定
+          seen: true, //v-if
+          foo: 'TiamFoo' //动态参数值预期求出string或者null 同时要字母或下划线开头 字母会转化成小写的
+
+          //缩写
+          //v-bind => :
+          //v-on => @
+        },
+        methods: {
+          onSubmit() {}
+        }
+      });
+    </script>
+  </body>
+</html>

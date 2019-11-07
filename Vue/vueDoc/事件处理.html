@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+    <script src="vue.js"></script>
+    <style>
+      .box {
+        width: 100px;
+        height: 100px;
+        background: grey;
+      }
+      .childbox {
+        width: 50px;
+        height: 50px;
+        background: green;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app">
+      <button @click="counter++;if(2>1){msg--}">{{ counter }}</button>
+      <p>{{ msg }}</p>
+      <hr />
+      <button @click="greet">方法名greet</button>
+      <hr />
+      <button @click="say1('hi');counter++;">方法语句 sayhi</button>
+      <button @click="say2($event,msg)">
+        方法语句，需要访问原生的DOM事件时，用特殊变量$event传入
+      </button>
+      <hr />
+      <div class="box" @click="boxClick">
+        <p class="childbox" @click.stop="childBoxClick"></p>
+      </div>
+      <div style="background: #f5f5f5" @click="submitClickOuter">
+        <form @submit.prevent="submitClick">
+          <button>先submitClickOuter，再submitClick</button>
+          <!-- <button type="submit" @click.prevent="submitClick">先submitClick，再submitClickOuter</button> -->
+        </form>
+      </div>
+      <div class="box" @click.capture="boxClick1">
+        <p class="childbox" @click="childBoxClick1"></p>
+      </div>
+      <div class="box" @click.self="boxClick2">
+        <p class="childbox" @click="childBoxClick2"></p>
+      </div>
+      <button @click.once="btnClick">只触发一次</button>
+      <hr />
+      <input type="text" @keyup="inputCode" />
+      <input type="text" @keyup.enter="inputCode" placeholder="enter" />
+      <input type="text" @keydown.tab="inputCode" placeholder="tab" />
+      <input type="text" @keyup.delete="inputCode" placeholder="delete" />
+      <input type="text" @keyup.esc="inputCode" placeholder="esc" />
+      <input type="text" @keyup.space="inputCode" placeholder="space" />
+      <input type="text" @keyup.up="inputCode" placeholder="up" />
+      <input type="text" @keyup.down="inputCode" placeholder="down" />
+      <input type="text" @keyup.left="inputCode" placeholder="left" />
+      <input type="text" @keyup.right="inputCode" placeholder="right" />
+      <input type="text" @keyup.f1="inputCode" placeholder="f1" />
+      <hr />
+      <button @keyup.17="inputCtrl1" style="user-select: none;">
+        单单释放
+      </button>
+      <button @click.ctrl="inputCtrl2" style="user-select: none;">
+        no ctrl
+      </button>
+      <input type="text" @keyup.alt.67="inputs" placeholder="alt+c" />
+      <input type="text" @keyup.alt="inputs" placeholder="alt" />
+      <input type="text" @keyup.ctrl="inputs" placeholder="ctrl" />
+      <input type="text" @keyup.shift="inputs" placeholder="shift" />
+      <input type="text" @keyup.meta="inputs" placeholder="no meta" />
+
+      <button @click.alt="exact">no exact</button>
+      <button @click.alt.exact="exact">exact</button>
+      <button @click.exact="exact">no s</button>
+    </div>
+    <script>
+      //为什么在html中监听事件
+      //-轻松定位到，js代码里对应的方法
+      //-无需在js中手动绑定事件，使ViewModel代码是纯粹的逻辑，和DOM完全节藕，易于测试
+      //-当ViewModel销毁时，所有事件处理器都会，自动被删除。无需担心如何清理它们
+      const vm = new Vue({
+        el: '#app',
+        data: {
+          msg: 100,
+          counter: 0 //监听事件--v-on指令-》监听DOM事件，触发时运行一些js代码
+        },
+        methods: {
+          //事件处理方法--方法名-》逻辑复杂起来后，直接把js代码写到v-on指令中，是不可行的。v-on还可以接收一个需要调用的方法的名字
+          greet() {
+            alert('hello..');
+          },
+          //内联处理器中的方法--方法语句-》可以在内联js代码中，调用方法
+          say1(str) {
+            alert(str);
+          },
+          say2(e, p) {
+            alert('hello' + this.msg);
+            alert(e.target.tagName);
+            alert(p);
+          },
+          //修饰器
+          //-stop -》阻止冒泡
+          boxClick() {
+            alert('boxClick');
+          },
+          childBoxClick(e) {
+            //e.stopPropagation();
+            console.log(e);
+            alert('childBoxClick');
+          },
+          //-prevent-》阻止默认行为
+          submitClickOuter() {
+            alert('submitClickOuter');
+          },
+          submitClick(e) {
+            //e.preventDefault();
+            console.log(e);
+            alert('submitClick');
+          },
+          //-capture-》使用事件捕获模式，即先处理自身，再处理内部
+          //--加了capture 先弹boxClick1 再弹childBoxClick1
+          boxClick1(e) {
+            //e.stopPropagation(); //加了capture，再加这句，只弹boxClick1
+            alert('boxClick1');
+          },
+          childBoxClick1() {
+            alert('childBoxClick1');
+          },
+          //-self-》只当event.target是当前元素时触发，即事件不是内部触发的
+          boxClick2() {
+            alert('boxClick2'); //只有点击外部box时触发。点击内部childBox不会触发
+          },
+          childBoxClick2() {
+            alert('childBoxClick2');
+          },
+          //-once-》事件只触发1次，注意：不像其它只能对原生DOM事件,起作用的修饰符。.once还能被用到,自定义的组件事件上
+          btnClick() {
+            alert();
+          },
+          //-passive-》优化移动端性能，滚动事件的滚动行为会立即触发，不会等onScroll完成。不要与.prevent一起使用，.prevent将无效
+
+          //按键码
+          //-enter tab delete esc space up dowm left right
+          inputCode(e) {
+            console.log(e);
+            console.log(e.target.value);
+          },
+          //系统修饰符
+          //-ctrl alt shift meta -》事件触发时，系统修饰符必须处于，按下状态
+          inputCtrl1() {
+            alert('inputCtrl1');
+          },
+          inputCtrl2() {
+            alert('inputCtrl2');
+          },
+          inputs(e) {
+            console.log(e);
+            console.log(e.target.value);
+          },
+          exact() {
+            alert('exact'); //加了exact(精确的)之后，按下多余的键无效
+          }
+        }
+      });
+    </script>
+  </body>
+</html>

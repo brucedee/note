@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+    <script src="../vue.js"></script>
+  </head>
+  <body>
+    <div id="app">
+      <button @click="switchs">切换</button>
+      <keep-alive>
+        <component :is="dynamicc"></component>
+      </keep-alive>
+      <hr />
+      <cg></cg>
+      <cg1></cg1>
+    </div>
+    <script>
+      //动态组件
+      const ca = {
+        template: `<div>
+                <p>组件a</p>
+                <ul>
+                    <li v-for="n of 3" @click="tabChange(n)">tab{{n}}</li>
+                </ul>
+                <div v-if="num == 1">我</div>
+                <div v-if="num == 2">想</div>
+                <div v-if="num == 3">ni</div>
+            </div>`,
+        data() {
+          return {
+            num: 1
+          };
+        },
+        methods: {
+          tabChange(e) {
+            this.num = e;
+          }
+        }
+      };
+      const cb = {
+        template: `<p>
+                <i>组件b</i>
+            </p>`
+      };
+
+      //异步组件
+      //-需要的时候渲染
+      Vue.component('cg', {
+        template: '<div>cg</div>'
+      });
+
+      Vue.component('cg1', function(reso) {
+        setTimeout(() => {
+          reso({
+            template: '<div>5s后显示 cg1</div>'
+          });
+        }, 5000);
+      });
+
+      const vm = new Vue({
+        el: '#app',
+        data: {
+          dynamicc: 'ca'
+        },
+        methods: {
+          switchs() {
+            if (this.dynamicc == 'ca') {
+              this.dynamicc = 'cb';
+            } else {
+              this.dynamicc = 'ca';
+            }
+          }
+        },
+        components: {
+          ca,
+          cb
+        }
+      });
+    </script>
+  </body>
+</html>

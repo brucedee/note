@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+    <script src="vue.js"></script>
+  </head>
+  <body>
+    <div id="app">
+      <myt v-if="false"></myt>
+      <p v-else>no hello</p>
+      <hr />
+      <template v-show="false">
+        <p>q</p>
+        <p>w</p>
+      </template>
+      <hr />
+      <div v-if="loginByUserName">
+        <label for="">username:</label>
+        <input type="text" placeholder="姓名" :key="1" />
+      </div>
+      <div v-else>
+        <label for="">email:</label>
+        <input type="text" placeholder="邮箱" :key="2" />
+      </div>
+      <button @click="loginByUserName =!loginByUserName">点我</button>
+    </div>
+    <script>
+      //v-if
+      //-用于条件性的渲染一块内容，只会在指令表达式，返回truthy值的时候渲染
+      //-v-if是一个指令，必须添加到一个元素上。如果想切换多个元素，可以把<template>元素当做不可见的包裹元素，在上面使用v-if,最终的结果不包含template元素
+      //-v-else-if,v-else可以分别作为if的else-if和else块
+
+      //v-show
+      //-另一个根据条件展示元素的选项
+
+      //v-if vs v-show
+      //v-show不支持tempalte元素，也没有else-if else块
+
+      //v-show不管初始条件真假，元素始终会被渲染，并保留在DOM中。只是简单切换元素的display。
+      //v-if在初始条件为假时，什么也不做。而切换时会确保，条件块内的事件监听器和子组件，适当的被重建和销毁
+
+      //v-if有更高的切换开销。v-show有更高的，初始渲染开销更高。需要频繁切换时用v-show，运行条件很少改变则用v-if
+
+      Vue.component('myt', {
+        template: '<p>hello</p>'
+      });
+      const vm = new Vue({
+        el: '#app',
+        data: {
+          loginByUserName: true
+        }
+      });
+    </script>
+  </body>
+</html>

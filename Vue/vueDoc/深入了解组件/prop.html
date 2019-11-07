@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+    <script src="../vue.js"></script>
+    <style>
+      .class2 {
+        color: red;
+      }
+      .class1 {
+        color: green;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app">
+      <!-- 这里需要kebab-case -->
+      <global-component1
+        my-msg="hello"
+        ab-c="职责而"
+        xx="6666"
+      ></global-component1>
+      <global-component2
+        :title="tt+9"
+        :num="8"
+        :true-if1="false"
+        true-if2
+        :ps="pss"
+      ></global-component2>
+      <hr />
+      <local-component
+        str="iloveyou"
+        :init-age="18"
+        :obj="objs"
+        :arr="arrs"
+      ></local-component>
+      <p>{{ objs.name }} {{ objs.size }}</p>
+      <hr />
+      <component-a
+        type="type2"
+        class="class2"
+        style="font-size: 30px;margin-left:100px"
+      ></component-a>
+      <component-b
+        type="t2"
+        class="c2"
+        style="font-size: 30px;font-style: italic"
+        placeholder="请输入..."
+      ></component-b>
+    </div>
+
+    <script>
+      //prop
+
+      //-prop类型
+      //--字符串数组
+      Vue.component('globalComponent1', {
+        props: ['MyMsg', 'abc'], //区分大小写 此时这里是PascalCase写法
+        // props: {
+        //   title: String
+        // },
+        template: '<h1>全局...{{MyMsg}} {{abc}}</h1>'
+      });
+      //--对象-》可以指定值类型(String Number Boolean Object Function Array Symbol Date) 和默认值
+      function Person(name, age) {
+        //类型也可以是，自定义构造函数
+        this.name = name;
+        this.age = age;
+      }
+      Vue.component('globalComponent2', {
+        props: {
+          title: String,
+          num: {
+            type: Number
+          },
+          num1: {
+            default: 100
+          },
+          trueIf1: Boolean,
+          trueIf2: Boolean,
+          ps: Person
+        },
+        template:
+          '<h1>{{title}} {{num}} {{num1}} <span v-if="trueIf1">是否显示1</span> <span v-if="trueIf2">是否显示2</span> {{ps.name}} {{ps.age}} </h1>'
+      });
+
+      //-单向数据流
+      //--所有的prop都使得，父子prop之间形成一张单向下行绑定。父级prop的更新，会向下流动到子组件中。
+      //--反过来不行,防止子组件意外改变父组件状态，导致应用数据流难以理解。意味着不应该，在子组件内部改变prop
+      //--注意：对象和数组是作为引用传入的，对于一个对象或数组的prop，子组件改变它会影响到父组件的状态
+
+      const localComponent = {
+        template: `<div>
+          <p>{{reverseStr}} {{age}} {{obj.name}} {{obj.size}}</p>
+          <ul>
+            <li v-for="item of arr">{{item}}</li>
+          </ul>
+          <button @click="change">go change</button>
+        </div>`,
+        props: ['str', 'initAge', 'obj', 'arr'],
+        data() {
+          //试图改变prop1--prop作为初始值传入
+          return {
+            age: this.initAge
+          };
+        },
+        computed: {
+          //试图改变prop1--prop作为原始值传入
+          reverseStr() {
+            return this.str
+              .split('')
+              .reverse()
+              .join('');
+          }
+        },
+        methods: {
+          change() {
+            //this.str = 'i need you'; //会报错
+            this.age = 88;
+            this.obj.name = 'goggo'; //对象
+            this.arr[1] = '66'; //数组
+          }
+        }
+      };
+
+      //-非prop的特性
+      //--传向一个组件，但是该组件并没有相应，prop定义的特性
+      //--除了class和style特性是合并，其它非prop特性，是替换
+      //--如果不希望组件根元素继承特性，可以在组件选项中设置inheritAttrs:false-》注意：class和style例外，无论设置否，组件根元素都会继承
+      //--$attrs属性，包含了传递给一个组件的属性名和属性值-》注意：不包括class和style
+
+      const componentA = {
+        template: `<div type="type1" class="class1" style="fontSize:20px;">
+          <p>p...</p><span v-bind="$attrs">span...</span>
+        </div>`
+      };
+      const componentB = {
+        inheritAttrs: false,
+        template: `<div type="t1" class="c1" style="fontSize:20px;">
+          <p>p...</p><span v-bind="$attrs">span...</span><input v-bind="$attrs" />
+        </div>`
+      };
+
+      const vm = new Vue({
+        el: '#app',
+        data: {
+          tt: '我是标题',
+          objs: {
+            name: 'haha',
+            size: 20
+          },
+          arrs: ['aa', 76, 'dsfty'],
+          pss: new Person('zhui', 18)
+        },
+        components: {
+          localComponent,
+          componentA,
+          componentB
+        }
+      });
+    </script>
+  </body>
+</html>

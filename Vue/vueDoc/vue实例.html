@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+   <script src="vue.js"></script>
+   <!-- <script src="vue.runtime.js"></script> -->
+  <body>
+    <div id='forTemplateDOM' style="display: none"><p>for template DOM</p></div>
+
+    <div id="app">
+        <p>{{msg}}</p>
+        <p>{{msg1}}</p>
+        <button @click="show$el">点我</button>
+    </div>
+    <script>
+      //*****实例*****
+      //-一个Vue应用，由一个通过new Vue创建的根实例，以及可选的、可嵌套的、可服用的组件树构成
+      //-所有的Vue组件都是Vue实例，接受相同的选项对象(根实例特有选项除外)
+      Object.freeze
+
+      const vm = new Vue({
+        //el: '#app', //可用下面的，手动挂载方式
+
+        //手写template 
+        //-需要编译器，需要一个根元素 
+        //-可以是字符串
+        //template: '<p>for template str</p>',
+        //-也可以是DOM
+        //template: document.getElementById('forTemplateDOM').innerHTML, //以后面的template为准
+
+        //手写render函数，则以此函数为准 
+        /* render(h){
+            return h('p',{
+                attrs: {
+                    "title": 'i am p tag'
+                }
+            },'for render')
+        }, */
+
+        //*****数据*****
+        //-当一个vue实例被创建的时，data对象中所有属性，都被加入到了Vue的响应式系统中 -》除非Object.freeze(data)
+        //-只有当实例创建时，data中存在的属性，才是响应式的
+        data: { 
+          msg: 'hello'
+        },
+        watch: {
+          // msg(newVal,oldVal){
+          //   console.log(newVal,oldVal) //hello change hello
+          // }
+        },
+        beforeCreate(){
+            this.msg1 = 'world'
+        },
+        created(){
+           setTimeout(()=>{
+                this.msg = 'hello change'
+           },1000)
+            setTimeout(() => {
+                this.msg1 = 'world no change' //不会变 因为不是响应式的
+            }, 2000);
+
+            // this.$watch('msg',(newVal,oldVal)=>{
+            //     console.log(newVal,oldVal) //hello change hello
+            // })
+        },
+        mounted: ()=>{
+          console.log('选项属性种箭头函数this:',this) //window
+        },
+        methods: {
+          show$el:()=>{
+            console.log('回调函数中箭头函数this:',this.$el) //undefined
+          },
+          // show$el(){
+          //   console.log(this.$el) //<div id="app">...</div>
+          // }
+        }
+      }).$mount('#app');
+
+      //*****实例暴露了，一些实用属性和方法，都有前缀$*****
+      console.log('vm:',vm) //mounted之后 $data $el都要
+      console.log('vm.$el:',vm.$el) //<div id="app">...</div> -》beforeMount后才有
+      console.log(vm.$data === vm._data) //true -等于实例中的data -》created后才有
+
+      vm.$watch('msg',(newVal,oldVal)=>{
+        console.log(newVal,oldVal) //hello change hello
+      })
+     
+      //*****生命周期*****
+      //-每个Vue实例被创建时，都要经过一系列的初始化过程。如设置数据监听，编译模板，挂载到DOM，数据变化时更新DOM
+      //-初始化过程中，会运行一些生命周期钩子函数，方便用户在不同阶段，添加自己的代码
+      //-生命周期钩子中，this指向调用它的Vue实例 -》不要在选项属性或者回调函数中，使用箭头函数。如上，this作为变量向上级此法作用域找，这里为window
+
+    </script>
+  </body>
+</html>

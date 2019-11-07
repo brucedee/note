@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+    <script src="vue.js"></script>
+    <style>
+      .componentA {
+        color: red;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app">
+      <p class="c" :class="bind">class1</p>
+      <p class="c" :class="bind+'a'">class1a</p>
+      <hr />
+      <p class="c" :class="2<1?'conditiona':'conditionb'">
+        conditionb
+      </p>
+      <hr />
+      <p class="c" :class="{obja: objaIf}">obja</p>
+      <p class="c" :class="{objb: objbIf, objbb: 'xxx'}">
+        objbb
+      </p>
+      <p class="c" :class="computedObjc">computedObjca computedObj-b</p>
+      <hr />
+      <p class="c" :class="['arra',bind,bind+'arr',{obja: objaIf}]">
+        arra class1 class1arr obja
+      </p>
+      <componentA class="c" :class="{active: isActive}"
+        ><i>componentA c bindc active</i></componentA
+      >
+      <hr />
+      <hr />
+      <p
+        style="font-size: 30px;font-Weight:bold;"
+        :style="{color: colors,marginLeft: '100px','margin-top': 10+'px'}"
+      >
+        styleBase
+      </p>
+      <p :style="2>1 ?'fontSize:50px;': ''">styleIf</p>
+      <p :style="styleObj">
+        styleObj
+      </p>
+      <p :style="[styleObj,styleObj1]">styleArr</p>
+    </div>
+    <script>
+      //绑定html class
+      //-绑定表达式结果，除了字符串，还可以是对象和数组，方便切换等操作
+
+      //绑定内联样式
+      //-看起来像css，但其实是一个js对象
+      //-css属性名可以用，驼峰式(camelCase)或短横线分割(kebab-case，需要引号括起来)，命名
+
+      const componentA = {
+        template:
+          '<h6 class="componentA" :class="bind">我是组件 <span>A</span> <slot></slot></h6>',
+        data() {
+          return {
+            bind: 'bindc'
+          };
+        }
+      };
+
+      const vm = new Vue({
+        el: '#app',
+        data: {
+          bind: 'class1',
+          objaIf: ' ', //真值
+          objbIf: '', //假值
+          isActive: true,
+          colors: 'red',
+          styleObj1: {
+            fontStyle: 'italic'
+          }
+        },
+        computed: {
+          computedObjc() {
+            return {
+              computedObjca: true,
+              'computedObj-b': this.objaIf,
+              computedObjc: false
+            };
+          },
+          styleObj() {
+            return {
+              color: this.isActive ? 'blue' : 'green'
+            };
+          }
+        },
+        components: {
+          componenta: componentA
+        }
+      });
+    </script>
+  </body>
+</html>

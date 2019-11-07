@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+    <script src="vue.js"></script>
+  </head>
+  <body>
+    <div id="app">
+      <button-counter></button-counter>
+      <button-counter></button-counter>
+      <button-counter></button-counter>
+      <hr />
+      <blog-post title="hello"></blog-post>
+      <blog-post title="world"></blog-post>
+      <div :style="{fontSize:postFontSize+'em'}">
+        <blog-post
+          v-for="item of posts"
+          :title="item.title"
+          :content="item.content"
+          @enlarge-text="postFontSize+=$event"
+          :key="item.id"
+        ></blog-post>
+        <!-- <blog-post
+          v-for="item of posts"
+          :title="item.title"
+          :content="item.content"
+          @enlarge-text="large"
+          :key="item.id"
+        ></blog-post> -->
+      </div>
+      <blog-post1
+        v-for="post of posts"
+        :post="post"
+        :key="post.id"
+      ></blog-post1>
+      <hr />
+      <custom-input v-model="msg"></custom-input>
+      <custom-input :value="msg" @input="msg=$event"></custom-input>
+      <p>{{ msg }}</p>
+      <hr />
+      <alert-box>fromslot</alert-box>
+      <component is="alert-box">alert-box</component>
+      <component is="alertBox">alertBox</component>
+      <hr />
+      <table>
+        <tr is="litest"></tr>
+      </table>
+
+      <table>
+        <litest></litest>
+      </table>
+    </div>
+    <script>
+      //组件
+      //-可复用的vue实例。在new Vue根实例中,可以作为自定义元素使用
+      //-与new Vue接受相同的的选项(除了el这样的根特有的选项)
+      //-每用一次组件，就会有一个，它的新实例被创建
+
+      //-全局注册的组件后，后面的任何(通过new Vue)新创建的Vue实例可以使用它，也包括组件树中，所有子组件的模板中
+      Vue.component('button-counter', {
+        template: '<button @click="btnClick">点击了{{counter}}次</button>',
+        data() {
+          //data选项必须是一个函数,这样每个实例才能维护，一份返回的data对象的，独立的拷贝
+          return {
+            counter: 0
+          };
+        },
+        methods: {
+          btnClick() {
+            this.counter++;
+          }
+        }
+      });
+
+      //-局部注册的组件，
+      const blogPost = {
+        name: 'blog-post',
+        props: ['title', 'content'], //通过prop向子组件传递数据
+        template: `<div class="posts">
+                      <h6>{{title}}</h6>
+                      <button @click="$emit('enlarge-text',2)">放大字体</button>  
+                      <div v-html="content"></div>
+                    </div>` //每个组件必须只有一个根元素。而且不能是template元素，因为内部可能有多个元素
+      };
+      const blogPost1 = {
+        name: 'blog-post',
+        props: ['post'], //为每个相关信息定义一个prop，太多的时候会变得麻烦，所以定义一个
+        template:
+          '<div class="posts"><h6>{{post.title}}</h6><div v-html="post.content"></div></div>'
+      };
+
+      const customInput = {
+        props: ['value'],
+
+        template: `<div><input :value="value" @input="$emit('input',$event.target.value)"/></div>`
+      };
+
+      const alertBox = {
+        template: '<h3>alert... <slot></slot> ...alert</h3>'
+      };
+
+      const litest = {
+        template: '<li><p>1itest</p></li>'
+      };
+      const tdtest = {
+        template: '<tr><li>ert</li></tr>'
+      };
+
+      const vm = new Vue({
+        el: '#app',
+        data: {
+          posts: [
+            {
+              id: 'a',
+              title: 'pa',
+              content: '<p><i>contenta</i></p>'
+            },
+            {
+              id: 'b',
+              title: 'pb',
+              content: '<p><i>contentb</i></p>'
+            },
+            {
+              id: 'c',
+              title: 'pc',
+              content: '<p><i>contentc</i></p>'
+            }
+          ],
+          postFontSize: 1, //s
+          msg: 'hello'
+        },
+        methods: {
+          large(e) {
+            console.log(e); //2
+          }
+        },
+        components: {
+          blogPost, //prop向子组件传递数据 单个根元素 监听子组件事件 使用事件抛出一个值
+          blogPost1, //减少prop个数
+          customInput, //组件上使用v-model
+          alertBox, //插槽slot  动态组件component is
+          litest //解析DOM模板时注意元素限制。 字符串 (例如：template: '...')，单文件组件(.vue)，<script type="text/x-template">时限制不存在
+        }
+      });
+    </script>
+  </body>
+</html>

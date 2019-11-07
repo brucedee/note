@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+    <script src="../vue.js"></script>
+  </head>
+  <body>
+    <div id="app">
+      <!-- <input type="text" placeholder="autofocus" autofocus />
+      <input type="text" placeholder="v-focuss" v-focuss /> -->
+      <input type="text" placeholder="v-focus" v-focus />
+
+      <div
+        id="thedemo"
+        v-demo:param.m1.m2="val"
+        style="height: 500px;background: grey;margin-top:10px"
+      ></div>
+      <div v-pin="200">风和日丽</div>
+      <div v-easy></div>
+      <div
+        v-obj="{
+        name: 'ewrf',
+        age: 67
+      }"
+      ></div>
+    </div>
+    <script>
+      //自定义指令
+      //-注册方式
+      //--全局
+      Vue.directive('focus', {
+        inserted(e) {
+          e.focus();
+        }
+      });
+
+      const vm = new Vue({
+        el: '#app',
+        data: {
+          val: 'demoval'
+        },
+        directives: {
+          //--局部
+          focuss: {
+            inserted(e) {
+              e.focus();
+            }
+          },
+          //-钩子函数 bind inserted update componentUpdated unbind
+          //--钩子函数参数
+          demo: {
+            bind(el, binding) {
+              console.log(el);
+              console.log(binding); // {name:'demo',rawName:'param.m1.m2',modifiers: {m1: true, m2: true},arg: 'param',expression:"val",value:'demoval'}
+            }
+          },
+          //--动态指令参数
+          pin: {
+            bind(el, binding) {
+              el.style.position = 'fixed';
+              var p = binding.arg == 'left' ? 'left' : 'top';
+              el.style[p] = binding.value + 'px';
+            }
+          },
+          //-函数简写 --bind和update时触发相同行为，不关心其它钩子函数
+          easy(el, binding) {
+            console.log(binding);
+          },
+          //-对象字面量 --需要多个值时，可以传入js对象字面量。也就是指令函数可以接受，所有合法的js表达式
+          obj(el, binding) {
+            console.log(binding.value);
+          }
+        }
+      });
+    </script>
+  </body>
+</html>

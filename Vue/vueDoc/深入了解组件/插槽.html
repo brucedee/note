@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+    <script src="../vue.js"></script>
+  </head>
+  <body>
+    <div id="app">
+      <!-- tit num is not defined -->
+      <!-- <ca tit="tt">hello {{ tit }} {{ num }} </ca> -->
+      <ca v-slot="obj" tit="tt">hello {{ msg }} {{ obj.n }} {{ obj.t }}</ca>
+      <ca></ca>
+      <hr />
+      <cb>
+        <template v-slot:default
+          >主体内容1</template
+        >
+        <template v-slot:default
+          >主体内容2</template
+        >
+        主体内容0
+
+        <template slot="head"
+          >top</template
+        >
+        <h1 slot="head">头部</h1>
+        <h1 slot="head">toubu</h1>
+
+        <!-- <template v-slot:head>
+          新写法和旧写法一起的时候，新写法将完全替代旧写法
+        </template> -->
+
+        <!-- <i v-slot:foot>底部0</i> 报错 -->
+        <template v-slot:foot>
+          <i>底部1</i>
+        </template>
+        <template #foot>
+          <i>底部2</i>
+        </template>
+      </cb>
+      <hr />
+      <cc v-slot="{con}"> {{ con }} </cc><br />
+      <!-- <cc #default="{con}"> {{ con }} </cc><br /> -->
+      <cc v-slot:hd="{color}">
+        单个插槽时{{ color }}
+        <!-- <template v-slot:bd
+          >不能混用，作用域不明显，报错{{ con }}</template
+        > -->
+      </cc>
+      <cc>
+        <template v-slot:hd="hds"
+          ><p :style="{color:  hds.color }">
+            is hd
+          </p></template
+        >
+        <template v-slot:bd="{size:sizes}">
+          id bd : {{ sizes }}
+        </template>
+
+        <template slot-scope="{con='没有的话'}">
+          我是：{{ con }}
+        </template>
+      </cc>
+      <div>------------</div>
+      <cc #[dynamicname]>
+        我是动态的
+      </cc>
+      <hr />
+      <cd v-slot="{it}">
+        <h6 v-if="it.isActivated">已激活</h6>
+      </cd>
+    </div>
+    <script>
+      //插槽
+
+      //-插槽内容
+      //--slot元素作为承载内容分发的出口
+      //--没有slot的话，组件起始标签和结束标签之间的，任何内容都会被抛弃
+
+      //-编译作用域
+      //-插槽和模版的其它地方一样，不能访问ca的作用域
+      //-父级模版的内容在父级作用域中编译，子模版的内容在子作用域中编译
+
+      //-预备(后备，默认)内容
+      const ca = {
+        template: `<div>
+                组件a {{tit}}
+                <i><slot :n="num" :t="tit">我是预备的内容</slot></i>
+            </div>`,
+        props: ['tit'],
+        data() {
+          return {
+            num: 10
+          };
+        }
+      };
+
+      //-具名(命名)插槽
+      //--多个插槽时，name(默认default)特性可以用来，定义额外的插槽
+      //--使用的时候，以v-slot参数的形式提供其名称，v-slot 只能在template上使用(组件上也行，例外情况)
+      //  没有提供则为默认插槽(即可写成v-slot:default),提供了则只使用提供了的，并且后面提供的代替前面提供的(旧写法会叠加)
+      const cb = {
+        template: `
+            <div>
+                <header>
+                    <slot name="head">header预备</slot>    
+                </header>
+                <main>
+                    <slot>main预备</slot>
+                </main>
+                <footer>
+                    <slot name="foot">footer预备</slot>    
+                </footer>    
+            </div>
+          `
+      };
+
+      //-作用域插槽
+      //--绑定在slot元素上的属性，称为插槽prop
+      //--父级作用域中，可以给v-slot赋一个值，包含所有插槽prop(内部的工作原理是，插槽内容包括在一个单个参数的函数里,因此可以解构赋值)
+      //--提供的内容，是单个插槽时，v-slot才可以直接用在组件上。出现多个插槽时，始终使用template
+
+      //-动态插槽名
+      //-缩写--v-slot-》#  注意只有在有参数的时候才有用
+      const cc = {
+        template: `
+            <div>
+                <div class="hd">
+                    <slot name="hd" :color="thecolor"></slot>    
+                </div>
+                <div class="md">
+                    <slot con="md内容">md预备</slot>        
+                </div>
+                <div class="bd">
+                    <slot name="bd" size="big"></slot>        
+                </div> 
+            </div>
+          `,
+        data() {
+          return {
+            thecolor: 'red'
+          };
+        }
+      };
+
+      //demo
+
+      const cd = {
+        template: `
+            <div>
+                <ul>
+                    <li v-for="item of arr" :key="item.id">
+                        <slot :it="item">{{item.text}}</slot>    
+                    </li>    
+                </ul>
+            </div>
+          `,
+        data() {
+          return {
+            arr: [
+              {
+                id: 1,
+                isActivated: true,
+                text: '香蕉'
+              },
+              {
+                id: 2,
+                isActivated: false,
+                text: '苹果'
+              },
+              {
+                id: 3,
+                isActivated: true,
+                text: '桃子'
+              }
+            ]
+          };
+        }
+      };
+
+      const vm = new Vue({
+        el: '#app',
+        data: {
+          msg: 'world',
+          dynamicname: 'bd'
+        },
+        components: {
+          ca,
+          cb,
+          cc,
+          cd
+        }
+      });
+    </script>
+  </body>
+</html>

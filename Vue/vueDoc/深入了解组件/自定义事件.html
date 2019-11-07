@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+    <script src="../vue.js"></script>
+  </head>
+  <body>
+    <div id="app">
+      <!-- <c-a
+        the-title="i am title"
+        @child-click="childClicks"
+        :value="msg"
+        @input="msg=$event"
+      ></c-a> -->
+      <c-a
+        the-title="i am title"
+        @child-click="childClicks"
+        v-model="msg"
+      ></c-a>
+      <p>{{ msg }}</p>
+      <c-b v-model="msgs"></c-b>
+      {{ msgs }}
+      <hr />
+      <cdemo @click.native="outer"></cdemo>
+      <input @input="c" placeholder="base" />
+      <input @input.native="c" placeholder="base native" />
+      <br />
+      <c-c1 @input="c" placeholder="component base"></c-c1>
+      <c-c2 @input.native="c" placeholder="component native"></c-c2>
+      <c-c3 @inputs="c" placeholder="component "></c-c3>
+      <br />
+      <c-c4 @focus="c"></c-c4>
+      <hr />
+      <cmodel1 :tt="tit" @updates:tts="tit=$event"></cmodel1>
+      <p>{{ tit }}</p>
+      <!-- <cmodel2 :con="cons" @update:con="cons=$event"></cmodel2> -->
+      <!-- .sync这里只能是属性名，类似v-model，不能是表达式。可以是对象名，但不能直接写对象-->
+      <cmodel2 :con.sync="cons"></cmodel2>
+    </div>
+    <script>
+      //自定义事件
+      //-事件名字
+      //--不同于组件和prop的名字，事件名字不存在大小写转换，需要完全匹配
+
+      //-自定义组件的v-model
+      //--一个组件上的v-model默认会利用，名为value的prop和名为input的事件
+      //--model选项可以自定义prop和event。那样的话，value属性就可以另作它用。注意此时props属性仍然要写
+      const cA = {
+        template: `<div>{{theTitle}}
+            <button @click="btnClick">点我</button>
+            <input :value="vs"  @input="$emit('input',$event.target.value)" />
+        </div>`,
+        model: {
+          prop: 'vs'
+        },
+        props: ['theTitle', 'vs'],
+        methods: {
+          btnClick() {
+            this.$emit('child-click');
+          }
+        }
+      };
+
+      const cB = {
+        template: `<div>
+            <input type="checkbox" :checked="checkeds" @change="$emit('changes',$event.target.checked)" />
+        </div>`,
+        model: {
+          prop: 'checkeds',
+          event: 'changes'
+        },
+        props: ['checkeds']
+      };
+
+      //.native
+      //-将原生事件绑定到组件
+      const cdemo = {
+        template: `<div @click="inner">tttt </div>`,
+        methods: {
+          inner() {
+            alert('in');
+          }
+        }
+      };
+      const cC1 = {
+        template: `<input />`
+      };
+      const cC2 = {
+        template: `<input />`
+      };
+      const cC3 = {
+        template: `<input @input="$emit('inputs',$event)" />`
+      };
+
+      const cC4 = {
+        template: `<div><input placeholder="focus" v-on="inputListeners" /></div>`, //input不是根元素，父元素@focus.native将监听失败,@input.native可以
+        computed: {
+          inputListeners: function() {
+            var vm = this;
+            // `Object.assign` 将所有的对象合并为一个新对象
+            return Object.assign(
+              {},
+              // 我们从父级添加所有的监听器
+              this.$listeners,
+              // 然后我们添加自定义监听器，
+              // 或覆写一些监听器的行为
+              {
+                // 这里确保组件配合 `v-model` 的工作
+                focus: function(event) {
+                  vm.$emit('focus', event.target.value);
+                }
+              }
+            );
+          }
+        }
+      };
+
+      //.sync
+      //-有时需要对一个prop进行‘双向绑定’，子组件去修改父组件
+      const cmodel1 = {
+        template: `<div>
+            <p :title="tt" >pppp</p> <button @click="changett">点击1</button>
+          </div>`,
+        props: ['tt'],
+        // watch: { //若内部没事件触发时
+        //   tt(newVal) {
+        //     this.$emit('update:tt', newVal);
+        //   }
+        // },
+        methods: {
+          changett() {
+            this.$emit('updates:tts', 'from 点击1'); //若这里是update:tt，那只是一个语义化的方法，可以取其他名字
+          }
+        }
+      };
+      const cmodel2 = {
+        template: `<div>
+            <span>{{con}}</span> <button @click="changecon">点击2</button>
+          </div>`,
+        props: ['con'],
+        methods: {
+          changecon() {
+            this.$emit('update:con', 'from 点击2'); //用.sync修饰符作为语法糖时，这里必须是update:con
+          }
+        }
+      };
+
+      const vm = new Vue({
+        el: '#app',
+        data: {
+          msg: 'hello',
+          msgs: 'world',
+          tit: '我是p标签',
+          cons: {
+            name: '名字',
+            age: 18
+          }
+        },
+        methods: {
+          childClicks() {
+            console.log('123...');
+          },
+          outer() {
+            alert('out');
+          },
+          c(e) {
+            console.log(e);
+          }
+        },
+        components: {
+          cA,
+          cB,
+          cdemo,
+          cC1,
+          cC2,
+          cC3,
+          cC4,
+          cmodel1,
+          cmodel2
+        }
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+    <script src="../vue.js"></script>
+  </head>
+  <body>
+    <div id="app">
+      <anchoreds :level="2">2</anchoreds>
+      <anchoreds :level="4">4</anchoreds>
+      <hr />
+      <component-render myp="myprop"></component-render>
+      <cdemo></cdemo>
+      <cdemo1></cdemo1>
+      <hr />
+      <c-if-for :items="itemsArr"></c-if-for>
+      <cmodel v-model="val"></cmodel> <span>{{ val }}</span>
+      <hr />
+      <cslot :level="6">
+        88
+        <template v-slot:md="{num}"
+          >77{{ num }}</template
+        >
+      </cslot>
+      <hr />
+      <cfunc @click="log" :msg="msg"><b>click</b><em>me</em></cfunc>
+    </div>
+    <script type="x/template" id="anchored">
+      <h1 v-if="level==1"><slot></slot></h1>
+      <h2 v-else-if="level==2"><slot></slot></h2>
+      <h3 v-else-if="level==3"><slot></slot></h3>
+      <h4 v-else-if="level==4"><slot></slot></h4>
+      <h5 v-else-if="level==5"><slot></slot></h5>
+      <h6 v-else="level==6"><slot></slot></h6>
+    </script>
+    <script>
+      //基础
+      Vue.component('anchoreds', {
+        template: '#anchored',
+        props: {
+          level: Number
+        }
+      });
+      //节点，树以及虚拟DOM
+      Vue.component('componentRender', {
+        render(createElementDescription) {
+          //createElement -> VNode
+          return createElementDescription(
+            //-必填项  String Object Function
+            //--String-》HTML标签名
+            //--Object-》组件选项对象
+            //--Function-》resolve了上述任何一种的，一个async函数
+            'div',
+            //-数据选项(与模板中的属性对应)  Object
+            {
+              class: [
+                this.cls1,
+                'zz',
+                {
+                  yy: true
+                }
+              ],
+              style: {
+                'font-size': '24px',
+                fontWeight: 'bold'
+              },
+              attrs: {
+                ids: 'pp'
+              },
+              /* props: { // ?
+                myProp: "bar"
+              } */
+              /* domProps: {
+                innerHTML: "baz"
+              } */
+              on: {
+                click: this.clickHandler
+              }
+            },
+            //-子级虚拟节点 String Array
+            [
+              'may',
+              createElementDescription('p', this.myp + 'i will'),
+              createElementDescription('input')
+            ]
+          );
+        },
+        props: {
+          myp: String
+        },
+        data() {
+          return {
+            cls1: 'xx',
+            cls2: 'yy'
+          };
+        },
+        methods: {
+          clickHandler() {
+            alert();
+          }
+        }
+      });
+      const cdemo = {
+        render(h) {
+          pvnode = h(
+            'p',
+            {
+              on: {
+                click: () => {
+                  this.gg++;
+                }
+              }
+            },
+            this.gg
+          );
+          return h('div', [pvnode, pvnode]); //VNode 必须唯一 ?
+        },
+        data() {
+          return {
+            gg: 99
+          };
+        }
+      };
+      const cdemo1 = {
+        render(h) {
+          return h(
+            'div',
+            Array.apply(null, { length: 5 }).map(() => h('em', '🐠'))
+          );
+        }
+      };
+      //使用js代替模板功能
+      //-if for
+      const cIfFor = {
+        render(h) {
+          if (this.items) {
+            return h('ul', this.items.map(item => h('li', item)));
+          } else {
+            return h('p', 'no item');
+          }
+        },
+        props: ['items']
+      };
+      //v-model
+      const cmodel = {
+        render(h) {
+          return h('input', {
+            domProps: {
+              value: this.value
+            },
+            on: {
+              input: e => {
+                this.$emit('input', e.target.value);
+              }
+            }
+          });
+        },
+        props: ['value']
+      };
+      //插槽
+      const cslot = {
+        render(h) {
+          return h('div', [
+            h('h' + this.level, this.$slots.default),
+            h(
+              'p',
+              this.$scopedSlots.md({
+                num: this.nums
+              })
+            )
+          ]);
+        },
+        props: ['level'],
+        data() {
+          return {
+            nums: 100
+          };
+        }
+      };
+      //函数式组件
+      //-无状态-没有响应式数据
+      //-无实例-没有this上下文 -》通过第2个参数传递
+      //-函数式组件只是函数，渲染开销低很多
+      const cfunc = {
+        functional: true,
+        // render(h, context) {
+        //   return h('button', context.children);
+        // },
+        // render(h, { props, listeners, children }) {
+        //   return h(
+        //     'button',
+        //     {
+        //       attrs: props,
+        //       on: {
+        //         click: listeners.click
+        //       }
+        //     },
+        //     children
+        //   );
+        // },
+        render(h, { data, children }) {
+          return h('button', data, ['hello', children]);
+        }
+      };
+
+      const vm = new Vue({
+        el: '#app',
+        components: {
+          cdemo,
+          cdemo1,
+          cIfFor,
+          cmodel,
+          cslot,
+          cfunc
+        },
+        data: {
+          msg: 'hello',
+          itemsArr: ['apple', 'banana', 'orange'],
+          val: '123'
+        },
+        methods: {
+          log() {
+            console.log(987);
+          }
+        }
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+    <script src="vue.js"></script>
+  </head>
+  <body>
+    <div id="app">
+      <input v-model="textVal" />
+      <p>{{ textVal }}</p>
+      <textarea v-model="textareaVal">v-model后不会取这里的值的</textarea>
+      <p>{{ textareaVal }}</p>
+      <hr />
+      <input type="radio" id="r1" :value="rA" v-model="radioVal" />
+      <label for="r1">radio A</label>
+      <br />
+      <input type="radio" id="r2" value="rB" v-model="radioVal" />
+      <label for="r2">radio B</label>
+      <p>{{ radioVal }}</p>
+      <p>{{ typeof(radioVal) }}</p>
+      <br />
+
+      <input type="checkbox" id="c" v-model="checkboxVal" />
+      <label for="c">checkbox</label>
+      <p>{{ checkboxVal }}</p>
+      <input
+        type="checkbox"
+        id="cSp"
+        v-model="checkboxValSp"
+        true-value="对的"
+        false-value="错的"
+      />
+      <label for="cSp">checkboxSp</label>
+      <p>{{ checkboxValSp }}</p>
+      <br />
+      <input type="checkbox" id="c1" value="cA" v-model="checkboxValArr" />
+      <label for="c1">checkbox A</label>
+      <input type="checkbox" id="c2" value="cB" v-model="checkboxValArr" />
+      <label for="c2">checkbox B</label>
+      <input type="checkbox" id="c3" value="cC" v-model="checkboxValArr" />
+      <label for="c3">checkbox C</label>
+      <p>{{ checkboxValArr }}</p>
+      <hr />
+      <select v-model="selectVal">
+        <option value="" disabled>请选择</option>
+        <option value="Asp">A</option>
+        <option>B</option>
+        <option>C</option>
+      </select>
+      <p>{{ selectVal }}</p>
+      <br />
+      <select v-model="selectValArr" multiple>
+        <option>AA</option>
+        <option>BB</option>
+        <option>CC</option>
+      </select>
+      <p>{{ selectValArr }}</p>
+      <br />
+      <select v-model="selectDemoVal">
+        <option v-for="item of selectDemo" :value="item.val">{{
+          item.title
+        }}</option>
+      </select>
+      <p>{{ selectDemoVal }}</p>
+      <hr />
+      <input v-model.lazy="msg" />
+      <p>{{ msg }}</p>
+      <input v-model.number="num" />
+      <input type="number" v-model.number="num" />
+      <p>{{ num }}</p>
+      <p>{{ typeof(num) }}</p>
+      <input v-model.trim="trimStr" />
+      <p>{{ trimStr }}</p>
+      <p>{{ trimStr.length }}</p>
+      <br />
+      <br />
+      <br />
+    </div>
+    <script>
+      //v-model
+      //-可以在input、textarea、select元素上，创建双向数据绑定。会根据控件类型，自动选取正确的方法来更新元素
+      //-本质上是语法糖。监听用户输入事件，更新数据。并对极端场景作了一些特殊处理（如v-model不会在输入法，组合文字过程得到更新）
+      //-会忽略所有表单元素的value,checked,selected特性的初始值，将vue实例的数据作为数据来源
+
+      const vm = new Vue({
+        el: '#app',
+        data: {
+          //-v-model内部，为不同的表单元素。使用不同的属性，抛出不同的事件
+          //--value input
+          //---text
+          textVal: 'textValue',
+          //---textarea
+          textareaVal: 'textareaValue',
+
+          //--checked change
+          //---radio
+          rA: 77,
+          radioVal: 'rB',
+          //---checkbox
+          checkboxVal: true, //true or false
+          checkboxValSp: '', //true-value false-value 不能单独设置false-value？
+          checkboxValArr: ['cB'],
+
+          //-value change
+          //---select
+          selectVal: 'Asp',
+          selectValArr: ['BB'],
+
+          selectDemo: [
+            {
+              title: '选项1',
+              val: 's1'
+            },
+            {
+              title: '选项2',
+              val: 's2'
+            },
+            {
+              title: '选项3',
+              val: 's3'
+            }
+          ],
+          selectDemoVal: 's2', //没写:value的话，item.title则是title也是value，option中间需要写东西
+
+          //-修饰符
+          //--.lazy -》input转为change事件进行数据同步
+          msg: 'hello',
+          //--.number -》返回字符串。无法执行parseFloat时，返回原始值
+          num: 6,
+          //--.trim -》过滤首尾空白符
+          trimStr: ''
+        },
+        methods: {}
+      });
+    </script>
+  </body>
+</html>

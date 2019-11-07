@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+    <script src="../vue.js"></script>
+  </head>
+  <body>
+    <div id="app">
+      <global-component></global-component>
+      <local-component></local-component>
+    </div>
+    <script>
+      //组件注册
+
+      //-组件名字
+      //--kebab-case Vue.component('my-component-name',...)
+      //--PascalCase Vue.component('MyComponentName',...) -》直接用于DOM时，无效
+
+      //-注册方式
+      //-全局注册 Vue.component
+      //--可以用在任何new Vue创建的根实例中，以及所有子组件中
+      //--不再使用，仍会包含在构建结果中。造成用户下载的js无畏的增加
+      Vue.component('globalComponent', {
+        template: '<h1>全局... </h1>'
+      });
+      //-局部注册
+      //--使用前，必须先引入
+      const localComponent = {
+        template: '<p>局部... <globalComponent></globalComponent>  </p>' //和.vue文件一样，名字方式无限制
+      };
+
+      const vm = new Vue({
+        el: '#app',
+        data: {},
+        components: {
+          localComponent
+        }
+      });
+
+      //-模块系统
+      //....
+    </script>
+  </body>
+</html>

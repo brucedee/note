@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+    <script src="../vue.js"></script>
+  </head>
+  <body>
+    <div id="app">
+      <p>{{ msg }}</p>
+      <p>{{ msg1 }}</p>
+      <hr />
+      <h1>{{ num1 }}-{{ num2 }}</h1>
+      <clocal></clocal>
+      <cglobal></cglobal>
+    </div>
+    <script>
+      //mixin混入
+      //-基础
+      //--用来分发vue组件的可复用功能。混入对象可以包含任意组件选项，组件使用它时，它将被'混合'进入组件本身
+
+      //-合并选项
+      //--数据对象在内部会进行递归合并，发生冲突时，以组件数据优先
+      //--同名钩子函数将合并为一个数组，因此都将被调用，混入对象的钩子将在组件自身的钩子之前调用
+      //--值为对象的选项，如methods，components，directives，将被合并为一个对象，两个对象键名冲突时，取组件对象的键值对
+      const mixin1 = {
+        data() {
+          return {
+            msg: 'msgmixin1',
+            msg1: 'msg1'
+          };
+        },
+        mounted() {
+          console.log('mixin1 mounted');
+
+          this.fn3(); //也可以用，但是会增加耦合度
+        },
+        methods: {
+          fn1() {
+            console.log('mixin1 fn1');
+          },
+          fn2() {
+            console.log('mixin1 fn2');
+          }
+        }
+      };
+
+      //-合并方式
+      //--全局mixin
+      //---一旦使用，将影响每一个之后创建的vue实例（包括第三方组件）
+      //---大多数情况下，只应当应用于自定义选项，推荐作为插件发布，以避免重复应用混入-》自定义选项合并，简单的覆盖已有值
+      Vue.mixin({
+        data() {
+          return {
+            num2: 20
+          };
+        },
+        created() {
+          console.log('created from mixinGlobal');
+          if (this.$options.myoptions) {
+            console.log(this.$options.myoptions);
+          }
+        },
+        methods: {
+          getGlobalMixinMethods() {
+            console.log('getGlobalMixinMethods');
+          }
+        }
+      });
+      //--局部mixin
+      const mixinLocal = {
+        data: function() {
+          return {
+            num1: 10
+          };
+        },
+        created() {
+          console.log('---------------局部mixin---------------');
+          console.log('执行一遍:created from mixinLocal');
+          // this.getGlobalMixinMethods();
+          console.log('---------------局部mixin---------------');
+          if (this.$options.myoptions) {
+            console.log(this.$options.myoptions);
+          }
+        },
+        methods: {
+          getLocalMixinMethods() {
+            console.log('getLocalMixinMethods');
+          }
+        }
+      };
+
+      Vue.component('cglobal', {
+        template: '<h1>全局组件{{num2}}</h1>', //不能使用num1
+        created() {
+          console.log('---------------全局组件---------------');
+          this.getGlobalMixinMethods();
+          //this.getLocalMixinMethods();
+          this.$root.getRootMethods();
+          console.log('---------------全局组件---------------');
+        }
+      });
+
+      const clocal = {
+        template: '<div>局部组件{{num2}}{{xx}}</div>', //不能使用num1
+        data() {
+          return {
+            xx: 66
+          };
+        },
+        created() {
+          console.log('---------------局部组件---------------');
+          this.getGlobalMixinMethods();
+          //this.getLocalMixinMethods();
+          this.$root.getRootMethods();
+          console.log('---------------局部组件---------------');
+        }
+      };
+
+      const vm = new Vue({
+        el: '#app',
+        mixins: [mixinLocal, mixin1],
+        data: {
+          msg: 'hello'
+        },
+        created() {
+          console.log(123);
+          this.getGlobalMixinMethods();
+          this.getLocalMixinMethods();
+        },
+        mounted() {
+          console.log('mounted');
+          this.fn1();
+          this.fn2();
+        },
+        methods: {
+          getRootMethods() {
+            console.log('getRootMethods');
+          },
+          fn1() {
+            console.log('fn1');
+          },
+          fn3() {
+            console.log('fn3');
+          }
+        },
+        components: {
+          clocal
+        },
+        myoptions: 'myhello'
+      });
+    </script>
+  </body>
+</html>

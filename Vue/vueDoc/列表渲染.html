@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+    <script src="vue.js"></script>
+  </head>
+  <body>
+    <div id="app">
+      <ul>
+        <li v-for="(arr,i) of arrs" :key="arr.id">
+          <input type="checkbox" />{{ arr.id }}-{{ arr.message }}-{{ i }}
+        </li>
+      </ul>
+      <button @click="addArr">数组点击</button>
+      <hr />
+      <ul>
+        <li v-for="(obj,name,i) of objs" :key="name">
+          <input type="checkbox" />{{ obj }}-{{ name }}-{{ i }}
+        </li>
+      </ul>
+      <button @click="addObj">对象点击</button>
+      <hr />
+      <ul>
+        <li v-for="item in oddNums">{{ item }}</li>
+      </ul>
+      <ul>
+        <li v-for="item in evenNums(numsArr)">{{ item }}</li>
+      </ul>
+      <hr />
+      <ul>
+        <li v-for="n in num">{{ n }}</li>
+      </ul>
+      <hr />
+      <template v-for="item in templateArr">
+        <h6>{{ item }}</h6>
+        <span>...</span>
+      </template>
+      <hr />
+      <input type="text" v-model="thing" /><button @click="goTodo">todo</button>
+      <ul>
+        <li
+          is="todoComponent"
+          v-for="(todo,index) in todos"
+          :msg="todo.msg"
+          :key="todo.id"
+          @go-del.once="goDels(index)"
+        ></li>
+      </ul>
+    </div>
+    <script>
+      Vue.component('todoComponent', {
+        props: ['msg'],
+        template: '<div>{{msg}}<button @click="del()">删除</button></div>',
+        methods: {
+          del(idx) {
+            this.$emit('go-del');
+          }
+        }
+      });
+
+      const vm = new Vue({
+        el: '#app',
+        data: {
+          //数组-》value index
+          theid: 3,
+          arrs: [
+            { id: 1, message: 'Foo' },
+            { id: 2, message: 'Bar' },
+            { id: 3, message: 'demo' }
+          ],
+          //对象-》 value name index
+          objs: {
+            name: 'zhui',
+            age: 18
+          },
+          //过滤/排序-》使用计算属性或者方法
+          numsArr: [2, 4, 5, 7, 8],
+          //值-》接受整数，将模版重复对应次数
+          num: 3,
+          //template-》循环渲染包括一段元素的内容
+          templateArr: ['kobe', 'james'],
+          //components
+          thing: '',
+          id: 1,
+          todos: []
+        },
+        computed: {
+          //正常情况
+          oddNums() {
+            return this.numsArr.filter(n => n % 2);
+          }
+        },
+        methods: {
+          addArr() {
+            //this.arrs.unshift({ id: this.theid++, message: 'go' });
+            //利用索引改变数组项,修改数组长度
+            //-vue不能检测变化的写法
+            // this.arrs[1] = {
+            //   id: 2,
+            //   message: 'qq'
+            // };
+            //this.arrs.length = 1;
+            //-vue可以检测变化的写法
+            // this.$set(this.arrs, 1, {
+            //   id: 99,
+            //   message: 'set，ww'
+            // });
+            // Vue.set(this.arrs, 3, {
+            //   //4会报错，最多得到'push效果'
+            //   id: 100,
+            //   message: 'qwer'
+            // });
+            // this.arrs.splice(1, 0, {
+            //   id: 88,
+            //   message: 'splice，rr'
+            // });
+            this.arrs.splice(1);
+          },
+          addObj() {
+            //添加和删除对象属性
+            //-vue不能检测变化的写法
+            //this.objs.size = 'big';
+            // Object.assign(this.objs, {
+            //   aa: '11',
+            //   bb: 22
+            // });
+            //delete this.objs.age;
+            //-vue可以检测变化的写法
+            //this.$set(this.objs, 'size', 'small');
+            //Vue.set(this.objs, 'size', 'mid');
+            this.objs = Object.assign({}, this.objs, {
+              aa: '11',
+              bb: 22
+            });
+          },
+          //嵌套情况
+          evenNums(num) {
+            return num.filter(n => n % 2 == 0);
+          },
+          goTodo() {
+            this.todos.push({
+              id: this.id++,
+              msg: this.thing
+            });
+            this.thing = '';
+          },
+          goDels(index) {
+            //alert(); //once只触发1次
+            this.todos.splice(index, 1);
+          }
+        }
+      });
+    </script>
+  </body>
+</html>

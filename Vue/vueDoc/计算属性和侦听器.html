@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+    <script src="vue.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios@0.12.0/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/lodash@4.13.1/lodash.min.js"></script>
+  </head>
+  <body>
+    <div id="app">
+      <p>msg: {{ msg }}</p>
+      <p>
+        basic:
+        {{
+          msg
+            .split('')
+            .reverse()
+            .join('')
+        }}
+      </p>
+      <hr />
+      <p>computed: {{ reverseMsg }}</p>
+      <p>method: {{ getReverseMsg() }}</p>
+      <hr />
+      <p>watching: {{ watchMsg }}</p>
+      <p>firstName: {{ firstName }}</p>
+      <p>lastName: {{ lastName }}</p>
+      <p>watchFullName: {{ watchFullName }}</p>
+      <p>fullName: {{ fullName }}</p>
+      <p>fullNames: {{ fullNames }}</p>
+      <hr />
+      <input v-model="question" />
+      <p>{{ answer }}</p>
+    </div>
+    <script>
+      //计算属性
+      //-模板内表达式的设计初衷，是用于简单计算的，放入太多逻辑的话。会让模板太重且难以维护（不够语义化，多出用到的话显得繁琐）
+      //-对于复杂逻辑，应当使用计算属性
+
+      const vm = new Vue({
+        el: '#app',
+        data: {
+          msg: 'hello',
+          watchMsg: 'hello',
+          firstName: 'zhang',
+          lastName: 'san',
+          watchFullName: 'zhang san',
+          question: '',
+          answer: 'I cannot give you an answer until you ask a question!',
+          inputs: ''
+        },
+        computed: {
+          reverseMsg() {
+            return this.msg
+              .split('')
+              .reverse()
+              .join('');
+          },
+          fullName() {
+            return this.firstName + ' ' + this.lastName;
+          },
+          //-计算属性的setter
+          fullNames: {
+            get() {
+              return this.firstName + ' ' + this.lastName;
+            },
+            set(v) {
+              const arr = v.split(' ');
+              this.firstName = arr[0];
+              this.lastName = arr[1];
+            }
+          }
+        },
+        watch: {
+          //vs 侦听属性
+          //-侦听属性是更通用观察和响应，Vue实例上数据变动的方式
+          //-显得命令式和重复
+          msg(newVal) {
+            this.watchMsg = newVal
+              .split('')
+              .reverse()
+              .join('');
+          },
+          firstName(newVal) {
+            this.watchFullName = newVal + ' ' + this.lastName;
+          },
+          lastName(newVal) {
+            this.watchFullName = this.firstName + ' ' + newVal;
+          },
+          question(newVal) {
+            this.answer = 'wainting for you to stop typing';
+            //_.debounce(this.getAnswer, 1000)(); // 有差别
+            this.debouncedGetAnswer();
+          }
+        },
+        created() {
+          //this.getAnswer();
+          this.debouncedGetAnswer = _.debounce(this.getAnswer, 500);
+        },
+        methods: {
+          //vs 方法
+          //-计算属性是基于它们的响应式依赖，进行缓存的。只要依赖不变，多次访问会立即返回之前的计算结果。缓存是为了提升性能
+          //-每次访问都得再次执行函数
+          getReverseMsg() {
+            return this.msg
+              .split('')
+              .reverse()
+              .join('');
+          },
+
+          //vs 侦听属性
+          //-当数据变化时，需要执行异步或开销较大的操作时，使用watch侦听属性
+          getAnswer() {
+            if (!this.question.includes('?')) {
+              this.answer = 'question usually has a ?';
+              return;
+            }
+            this.answer = 'thinking...';
+            const self = this;
+            axios
+              .get('https://yesno.wtf/api')
+              .then(res => {
+                console.log('res', res);
+                self.answer = res.data.answer;
+              })
+              .catch(err => {
+                console.log('err', err);
+                self.answer = err;
+              });
+          }
+        }
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+    <script src="../../vue.js"></script>
+    <style>
+      #app {
+        height: 2000px;
+      }
+      .centered {
+        margin: 0 auto;
+        display: table;
+        font-size: 60px;
+        margin-top: 100px;
+      }
+
+      .box {
+        width: 200px;
+        line-height: 1.5;
+        padding: 10px;
+        border: 1px solid black;
+        margin: 0 auto;
+        margin-top: 30px;
+        opacity: 0;
+        transition: 1.5s all cubic-bezier(0.39, 0.575, 0.565, 1);
+      }
+
+      .other {
+        background: #eee;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app">
+      <myinput></myinput>
+      <h1 class="centered">Scroll me</h1>
+      <div class="box" v-scroll="handleScroll">
+        <p>
+          Lorem ipsum dolor sit amet, consectetur adipisicing elit. A atque amet
+          harum aut ab veritatis earum porro praesentium ut corporis. Quasi
+          provident dolorem officia iure fugiat, eius mollitia sequi quisquam.
+        </p>
+      </div>
+
+      <div class="other">hello</div>
+    </div>
+    <script>
+      Vue.directive('focu', {
+        bind(el, binding) {
+          console.log('bind-----------');
+          console.log(binding);
+        },
+        inserted(el) {
+          console.log('inserted-------');
+          el.focus();
+        }
+      });
+
+      const myinput = {
+        template: '<input v-focu:aa.cc.vv="zz" type="text"/>',
+        data() {
+          return {
+            zz: 100
+          };
+        },
+        beforeCreate() {
+          console.log('beforeCreate');
+        },
+        created() {
+          console.log('created');
+        },
+        beforeMount() {
+          console.log('beforeMount');
+        },
+        mounted() {
+          console.log('mounted');
+        }
+      };
+
+      //自定义滚动指令
+      //-通过指令创建高效的开发体验
+      //-避免遍历DOM节点
+      window.addEventListener('scroll', function(e) {
+        console.log(window.scrollY);
+      });
+
+      Vue.directive('scroll', {
+        inserted(el, binding) {
+          const f = function(e) {
+            if (binding.value(e, el)) {
+              window.removeEventListener('scroll', f);
+            }
+          };
+          window.addEventListener('scroll', f);
+        }
+      });
+
+      const vm = new Vue({
+        el: '#app',
+        data: {},
+        beforeCreate() {
+          console.log('beforeCreate1');
+        },
+        created() {
+          console.log('created1');
+        },
+        beforeMount() {
+          console.log('beforeMount1');
+        },
+        mounted() {
+          console.log('mounted1');
+        },
+        methods: {
+          handleScroll(e, el) {
+            if (window.scrollY > 50) {
+              console.log(99999);
+              el.setAttribute(
+                'style',
+                'opacity:1;transform: translateY(-10px)'
+              );
+            }
+            return window.scrollY > 100;
+          }
+        },
+        components: {
+          myinput
+        }
+      });
+    </script>
+  </body>
+</html>

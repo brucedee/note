@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+    <script src="../../vue.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  </head>
+  <body>
+    <div id="app">
+      <c1></c1>
+    </div>
+    <hr />
+    <div id="app1"></div>
+    <script type="text/x-template" id="t1">
+      <div>
+        <c1-child></c1-child>
+          <h1>c1:标题</h1>
+          <p>c1:内容</p>
+          <p>c1 msg--->{{msg}}</p>
+          <p>$data.msg--->{{$data.msg}}</p>
+          <br>
+          <p>$root.msg--->{{$root.msg}}</p>
+          <p>$root.$data.msg--->{{$root.$data.msg}}</p>
+          <p>$root._data.msg--->{{$root._data.msg}}</p>
+          <br>
+          <p>$root.$options.data().msg--->{{$root.$options.data().msg}}</p>
+          <p>$parent.msg:{{$parent.msg}}</p>
+      </div>
+    </script>
+    <script>
+      //实例属性
+      //-根实例属性  vm._data === vm.$data === vm.$options.data()
+      const c1Child = {
+        template: `<div>
+            <em>c1Child $parent.msg:{{$parent.msg}}</em><br />
+            <i>$root.msg:{{$root.msg}}</i><br />
+            <b>$appName:{{$appName}}</b>
+            <hr />
+          </div>`,
+        beforeCreate() {
+          console.log("c1Child", this.msg);
+          console.log("c1Child", this.$appName);
+        }
+      };
+      const c1 = {
+        template: "#t1",
+        data() {
+          return {
+            msg: "c1msg"
+          };
+        },
+        components: {
+          "c1-child": c1Child
+        },
+        beforeCreate() {
+          console.log("c1", this.msg);
+          console.log("c1", this.$appName);
+        }
+      };
+
+      //-原型上
+      //--$是vue所有实例都可用的属性到一个简单约定,避免和已有到数据，方法，计算属性冲突->可以根据喜好自己约定，如$_xx,避免和插件或未来到插件冲突
+      //--data上数据，如果以$开头命名，则不会挂在到实例上，如this.$xxx为undefined
+      //--有时不好'查找来源'
+      Vue.prototype.$appName = "my app";
+      Vue.prototype.appVersion = "my app version"; //普通命名可被覆盖
+
+      Vue.prototype.$https = axios;
+      Vue.prototype.$reverses = function(str) {
+        this[str] = this[str]
+          .split("")
+          .reverse()
+          .join("");
+      };
+
+      //-替代方案
+      //--没有使用模块系统时,全局常量化，在任何地方直接用，方便
+      const App = Object.freeze({
+        name: "azhui",
+        age: 18,
+        //hobby本身不可改变(不可赋值)，但是它作为引用对象可改变(属性增删改查)
+        hobby: {
+          food: "fruit",
+          hobby: "travel"
+        },
+        askill: {
+          reversesp(str) {
+            return str
+              .split("")
+              .reverse()
+              .join("");
+          }
+        }
+      });
+      //--使用时,require import即可，显得啰嗦但可维护性强
+
+      const vm = new Vue({
+        el: "#app",
+        data: {
+          msg: "the root msg",
+          $appNames: "root $appNames",
+          $_abc: "root $_abc",
+          appVersion: "root appVersion",
+          str: "hello"
+        },
+        beforeCreate() {
+          console.log("1", this.msg);
+          console.log("1", this.$appName);
+          console.log(this.appVersion);
+        },
+        created() {
+          console.log("777", this.$appNames);
+          console.log("888", this.$_abc);
+          console.log(this.appVersion);
+
+          this.$https
+            .get("https://jsonplaceholder.typicode.com/posts")
+            .then(res => {
+              console.log(res);
+            });
+          console.log("str-----", this.str);
+          this.$reverses("str");
+          console.log("reverse str-----", this.str);
+          this.str = App.askill.reversesp(this.str);
+          console.log("App.askill.reversesp str-----", this.str);
+        },
+        components: {
+          c1
+        }
+      });
+
+      const vm1 = new Vue({
+        template: "<div>app1:{{$appName}}</div>"
+      }).$mount("#app1");
+    </script>
+  </body>
+</html>
