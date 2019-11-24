@@ -26,7 +26,7 @@
    }
    ```
 
-2. Array.from --将类数组(array-like,具有length属性)对象或者可遍历对象(iterable，具有iterator)对象转为数组
+2. Array.from --将类数组(array-like,具有length属性)对象或者可迭代对象(iterable，具有iterator)对象转为数组
 
    ```javascript
    Array.from(['hello',87]) //['hello',87]

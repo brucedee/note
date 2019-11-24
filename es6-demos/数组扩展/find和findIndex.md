@@ -3,7 +3,7 @@
 1. find(item,index,arr)个符合条件的数组成员值
 
    ```javascript
-   let arrfd = ['ss', 77, 90, 101, '梦'];
+   let arrfd = ['ss', 77, 90, 101, 1/'梦'];
    let fd1 = arrfd.find(item => true);
    fd1 //ss
    let fd11 = arrfd.find(item => typeof item === 'number');
