@@ -7,6 +7,7 @@
     <title>Document</title>
   </head>
   <body>
+    注：参数也可以是空或者数字，会转成字符串处理
     <h1>支持正则的，string对象的方法</h1>
     <h3>
       search ---> str.search(reg or toreg) ===> -1 index
@@ -21,9 +22,9 @@
     <ol>
       <li>没匹配到时返回null</li>
       <li>
-        没g标识时，返回一个数组['匹配中1','匹配中2'...index:'第一个匹配中时的index',input:'原始字符串',groups:...]
+        没g标识时，返回一个数组['匹配中',组1(如果有)...index:'第一个匹配中时的index',input:'原始字符串',groups:...]
       </li>
-      <li>有g标识时，返回一个数组['匹配中1','匹配中2']</li>
+      <li>有g标识时，返回一个数组['匹配中1','匹配中2'...]</li>
     </ol>
     <h3>
       replace ---> str.replace(str or reg, str or func) ===> str
@@ -87,6 +88,9 @@
         </table>
       </li>
     </ol>
+    <h3>
+      split ---> str.split(str or reg) ===》[]
+    </h3>
 
     <h1>正则对象的方法</h1>
     <h3>test ---> reg.test(str)</h3>
@@ -100,8 +104,8 @@
         类似match方法没g标识时，返回['匹配中1','匹配中2'...index:'第一个匹配中时的index',input:'原始字符串',groups:...]
       </li>
       <li>
-        有g和没g，返回值没差。但是有g的话，可以实现‘链式’执行。即reg有一个lastIndex属性。
-        有g匹配后，lastIndex设置为匹配中文本最后一个字符的下一个位置。没有匹配中时返回null。可用while循环遍历
+        有g和没g，返回值没差。但是有g的话，可以实现‘链式’执行。即reg有一个lastIndex属性。<br />
+        有g匹配后，lastIndex设置为匹配中文本最后一个字符的下一个位置。没有匹配中时返回null。可用while循环遍历<br />
         没g匹配。lastIndex始终为0
       </li>
     </ol>
