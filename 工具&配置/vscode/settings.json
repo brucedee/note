@@ -1,30 +1,27 @@
 {
-  //保存格式化
+  //files
+  //-自动识别编码，防止乱码?
+  "files.autoGuessEncoding": true,
+  //emmet
+  //-使非html标签tab补全
+  "emmet.triggerExpansionOnTab": true,
+  //editor
+  //-保存格式化
   "editor.formatOnSave": true,
-  //对这些文件开启eslint检测
+  //eslint
+  //-对这些文件开启eslint检测
   "eslint.validate": [
     "javascript",
     "javascriptreact",
-    {
-      "language": "vue",
-      "autoFix": true
-    },
-    {
-      "language": "html",
-      "autoFix": true
-    }
+    "vue",
+    "html"
   ],
-  //ts es7
-  "javascript.implicitProjectConfig.experimentalDecorators": true,
-  //自动识别编码，防止乱码?
-  "files.autoGuessEncoding": true,
-  //vetur?
+  //-vetur(for vue)
   "vetur.format.defaultFormatterOptions": {
     "prettyhtml": {
-      "printWidth": 200 //默认80 行长度限制，超过则标签换行
+      "printWidth": 200 //默认80 行长度限制，超过则换行
     }
   },
-  //emmet
-  //使非html标签tab补全
-  "emmet.triggerExpansionOnTab": true
+  //ts es7..
+  "javascript.implicitProjectConfig.experimentalDecorators": true
 }
