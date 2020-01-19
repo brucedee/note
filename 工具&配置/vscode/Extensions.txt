@@ -8,5 +8,6 @@ GitLens — Git supercharged
 IntelliSense for CSS class names in HTML
 Live Server
 open in browser
+Prettier - Code formatter
 Vetur
 vscode-icons
